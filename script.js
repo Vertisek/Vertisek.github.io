@@ -32,25 +32,25 @@ let db = null;
 function initDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
-        
+
         request.onerror = (e) => {
             console.error("IndexedDB load error:", e);
             reject(e);
         };
-        
+
         request.onsuccess = (e) => {
             db = e.target.result;
             resolve(db);
         };
-        
+
         request.onupgradeneeded = (e) => {
             const dbInstance = e.target.result;
-            
+
             // Create tracks store
             if (!dbInstance.objectStoreNames.contains('tracks')) {
                 dbInstance.createObjectStore('tracks', { keyPath: 'id' });
             }
-            
+
             // Create graphics store
             if (!dbInstance.objectStoreNames.contains('graphics')) {
                 dbInstance.createObjectStore('graphics', { keyPath: 'id' });
@@ -70,7 +70,7 @@ function saveToDB(storeName, item) {
         const transaction = db.transaction([storeName], 'readwrite');
         const store = transaction.objectStore(storeName);
         const request = store.put(item);
-        
+
         request.onsuccess = () => resolve(true);
         request.onerror = (e) => reject(e);
     });
@@ -81,7 +81,7 @@ function getAllFromDB(storeName) {
         const transaction = db.transaction([storeName], 'readonly');
         const store = transaction.objectStore(storeName);
         const request = store.getAll();
-        
+
         request.onsuccess = (e) => resolve(e.target.result);
         request.onerror = (e) => reject(e);
     });
@@ -92,7 +92,7 @@ function deleteFromDB(storeName, id) {
         const transaction = db.transaction([storeName], 'readwrite');
         const store = transaction.objectStore(storeName);
         const request = store.delete(id);
-        
+
         request.onsuccess = () => resolve(true);
         request.onerror = (e) => reject(e);
     });
@@ -165,10 +165,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. Init Database
     await initDB();
-    
+
     // Load user session
     loadUserSession();
-    
+
     appState.globalVolume = parseFloat(localStorage.getItem('vertone_volume') || '0.8');
     appState.isMuted = localStorage.getItem('vertone_muted') === 'true';
     audio.volume = appState.isMuted ? 0 : appState.globalVolume;
@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupModalEvents();
     setupAudioListeners();
     setupLightbox();
-    
+
     // Setup Settings and Discord Login listeners
     setupSettingsModal();
     setupDiscordLogin();
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderTracks();
     renderGraphics();
     renderReviews();
-    
+
     // Handle redirect hash login if coming from Discord OAuth
     handleDiscordHashLogin();
 });
@@ -259,7 +259,7 @@ function setupTabSwitching() {
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.getAttribute('data-target');
-            
+
             // Toggle buttons active class
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -273,7 +273,7 @@ function setupTabSwitching() {
             });
 
             appState.activeTab = target;
-            
+
             // Stop audio when leaving portfolio if active
             if (target !== 'tab-portfolio' && appState.currentPlayingId) {
                 pauseGlobalAudio();
@@ -359,7 +359,7 @@ function setupGraphicsCategorySwitching() {
         card.addEventListener('click', () => {
             const category = card.getAttribute('data-category');
             appState.activeCategory = category;
-            
+
             // Update Title
             const labels = {
                 bannery: 'Bannery',
@@ -372,7 +372,7 @@ function setupGraphicsCategorySwitching() {
             if (titleEl) {
                 titleEl.textContent = `Portfolio // Grafiki // ${labels[category] || category}`;
             }
-            
+
             renderGraphics();
             showPortfolioView('graphics-list');
         });
@@ -387,18 +387,18 @@ function renderTracks() {
     const container = document.getElementById('tracks-list-container');
     if (!container) return;
     container.innerHTML = '';
-    
+
     if (appState.tracks.length === 0) {
         container.innerHTML = '<p class="monospace" style="color:var(--color-text-dim); text-align:center;">Brak utworów w portfolio.</p>';
         return;
     }
-    
+
     appState.tracks.forEach(track => {
         const hasVoted = getVoteStatus('track', track.id);
         const card = document.createElement('div');
         card.className = `track-player-card ${appState.currentPlayingId === track.id ? 'active-playing' : ''}`;
         card.setAttribute('data-id', track.id);
-        
+
         let feedbackHTML = '';
         if (appState.isOwner) {
             const fbs = track.feedbacks || [];
@@ -427,7 +427,7 @@ function renderTracks() {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             <div class="track-info">
                 <span class="track-title monospace" title="${track.title}">${track.title}</span>
@@ -464,7 +464,7 @@ function renderTracks() {
                 ${feedbackHTML}
             </div>
         `;
-        
+
         container.appendChild(card);
     });
 
@@ -532,12 +532,12 @@ function renderTracks() {
             const id = btn.getAttribute('data-id');
             const textarea = document.querySelector(`.feedback-textarea[data-id="${id}"]`);
             const val = textarea.value.trim();
-            
+
             if (val.length < 3) {
                 showCustomAlert(t('feedback_too_short') || "Wpisz przynajmniej 3 znaki feedbacku!");
                 return;
             }
-            
+
             const item = appState.tracks.find(t => t.id === id);
             if (item) {
                 if (!item.feedbacks) item.feedbacks = [];
@@ -557,7 +557,7 @@ function renderTracks() {
             const id = btn.getAttribute('data-id');
             const index = parseInt(btn.getAttribute('data-index'));
             const type = btn.getAttribute('data-type');
-            
+
             showCustomConfirm(t('confirm_delete_feedback') || "Czy na pewno chcesz usunąć ten feedback?", async () => {
                 if (type === 'track') {
                     const item = appState.tracks.find(t => t.id === id);
@@ -585,7 +585,7 @@ function renderTracks() {
         btn.addEventListener('click', () => {
             const id = btn.getAttribute('data-id');
             const type = btn.getAttribute('data-type');
-            
+
             showCustomConfirm(t('confirm_reset_votes') || "Czy na pewno chcesz wyczyścić głosy dla tego elementu?", async () => {
                 if (type === 'track') {
                     const item = appState.tracks.find(t => t.id === id);
@@ -628,14 +628,14 @@ function renderGraphics() {
     const container = document.getElementById('graphics-items-list-container');
     if (!container) return;
     container.innerHTML = '';
-    
+
     const filtered = appState.graphics.filter(g => g.category === appState.activeCategory);
-    
+
     if (filtered.length === 0) {
         container.innerHTML = '<p class="monospace" style="color:var(--color-text-dim); text-align:center; padding: 20px 0;">Brak prac w tej kategorii.</p>';
         return;
     }
-    
+
     filtered.forEach(graph => {
         const hasVoted = getVoteStatus('graphic', graph.id);
         const card = document.createElement('div');
@@ -643,7 +643,7 @@ function renderGraphics() {
         card.setAttribute('data-id', graph.id);
         card.style.borderColor = 'rgba(168, 85, 247, 0.15)'; // purple border accent
         card.style.position = 'relative'; // relative positioning for absolute trash button
-        
+
         let srcUrl = graph.url;
         if (graph.imageData) {
             const blob = new Blob([graph.imageData], { type: graph.fileType || 'image/png' });
@@ -651,7 +651,7 @@ function renderGraphics() {
         } else if (graph.fileBlob) {
             srcUrl = URL.createObjectURL(graph.fileBlob);
         }
-        
+
         let feedbackHTML = '';
         if (appState.isOwner) {
             const fbs = graph.feedbacks || [];
@@ -680,7 +680,7 @@ function renderGraphics() {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             <div class="track-info">
                 <span class="track-title monospace" title="${graph.title}">${graph.title}</span>
@@ -707,7 +707,7 @@ function renderGraphics() {
                 ${feedbackHTML}
             </div>
         `;
-        
+
         container.appendChild(card);
     });
 
@@ -733,7 +733,7 @@ function renderGraphics() {
                 });
             });
         });
-        
+
         // Reset votes listeners
         document.querySelectorAll('#graphics-items-list-container .btn-reset-votes').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -779,12 +779,12 @@ function renderGraphics() {
             const card = btn.closest('.track-player-card');
             const textarea = card.querySelector('.feedback-textarea');
             const val = textarea.value.trim();
-            
+
             if (val.length < 3) {
                 showCustomAlert(t('feedback_too_short') || "Wpisz przynajmniej 3 znaki feedbacku!");
                 return;
             }
-            
+
             const item = appState.graphics.find(g => g.id === id);
             if (item) {
                 if (!item.feedbacks) item.feedbacks = [];
@@ -824,19 +824,19 @@ function renderReviews() {
     const container = document.getElementById('reviews-list-container');
     if (!container) return;
     container.innerHTML = '';
-    
+
     if (appState.reviews.length === 0) {
         container.innerHTML = '<p class="monospace" style="color:var(--color-text-dim); text-align:center;">Brak wystawionych opinii.</p>';
         return;
     }
-    
+
     appState.reviews.forEach(rev => {
         const hasVoted = getVoteStatus('review', rev.id);
         const card = document.createElement('div');
         card.className = 'card glass review-card';
-        
+
         const starsHTML = '★'.repeat(rev.rating) + '☆'.repeat(5 - rev.rating);
-        
+
         const avatarPresets = {
             user1: '👨‍💻',
             user2: '👩‍🎤',
@@ -844,7 +844,7 @@ function renderReviews() {
             user4: '⚡'
         };
         const avatarEmoji = avatarPresets[rev.avatar] || '👤';
-        
+
         // Check if there are before/after comparison files
         let audioHTML = '';
         if (rev.beforeAudioBlob || rev.afterAudioBlob) {
@@ -866,7 +866,7 @@ function renderReviews() {
                 </div>
             `;
         }
-        
+
         card.innerHTML = `
             ${appState.isOwner ? `<button class="btn-delete-review-absolute btn-delete-review" data-id="${rev.id}">🗑️</button>` : ''}
             <div class="review-header">
@@ -887,7 +887,7 @@ function renderReviews() {
                 </button>
             </div>
         `;
-        
+
         container.appendChild(card);
     });
 
@@ -927,12 +927,12 @@ function renderReviews() {
 function handleReviewAudioPlayToggle(id, type) {
     const review = appState.reviews.find(r => r.id === id);
     if (!review) return;
-    
+
     const playId = `${id}_${type}`;
     const data = type === 'before' ? review.beforeAudioData : review.afterAudioData;
     const mimeType = type === 'before' ? review.beforeFileType : review.afterFileType;
     const legacyBlob = type === 'before' ? review.beforeAudioBlob : review.afterAudioBlob;
-    
+
     if (appState.currentPlayingId === playId) {
         if (audio.paused) {
             audio.play();
@@ -943,7 +943,7 @@ function handleReviewAudioPlayToggle(id, type) {
     } else {
         pauseGlobalAudio();
         appState.currentPlayingId = playId;
-        
+
         if (data) {
             const blob = new Blob([data], { type: mimeType || 'audio/mpeg' });
             audio.src = URL.createObjectURL(blob);
@@ -952,7 +952,7 @@ function handleReviewAudioPlayToggle(id, type) {
         } else {
             return;
         }
-        
+
         audio.load();
         audio.play().catch(e => console.error("Playback failed:", e));
         updateReviewAudioUI();
@@ -964,7 +964,7 @@ function updateReviewAudioUI() {
         const id = btn.getAttribute('data-id');
         const type = btn.getAttribute('data-type');
         const playId = `${id}_${type}`;
-        
+
         if (appState.currentPlayingId === playId && !audio.paused) {
             btn.textContent = `⏸ ${type === 'before' ? 'Przed' : 'Po'} miksie`;
         } else {
@@ -977,7 +977,7 @@ function updateReviewAudioUI() {
 function handleTrackPlayToggle(id) {
     const track = appState.tracks.find(t => t.id === id);
     if (!track) return;
-    
+
     if (appState.currentPlayingId === id) {
         // Toggle play/pause
         if (audio.paused) {
@@ -989,9 +989,9 @@ function handleTrackPlayToggle(id) {
     } else {
         // Play different track
         pauseGlobalAudio();
-        
+
         appState.currentPlayingId = id;
-        
+
         if (track.audioData) {
             // Load file arraybuffer as blob
             const blob = new Blob([track.audioData], { type: track.fileType || 'audio/mpeg' });
@@ -1003,10 +1003,10 @@ function handleTrackPlayToggle(id) {
             // Load preset URL
             audio.src = track.url;
         }
-        
+
         audio.load();
         audio.play().catch(e => console.error("Audio playback blocked or failed:", e));
-        
+
         // Reset all seek bars, update active player
         updatePlayerUI();
     }
@@ -1024,7 +1024,7 @@ function updatePlayerUI() {
         const playBtn = card.querySelector('.btn-toggle-play');
         const slider = card.querySelector('.seek-slider');
         const timeLbl = card.querySelector('.time-label');
-        
+
         if (id === appState.currentPlayingId) {
             card.classList.add('active-playing');
             if (playBtn) playBtn.textContent = audio.paused ? '▶' : '⏸';
@@ -1035,7 +1035,7 @@ function updatePlayerUI() {
             if (timeLbl) timeLbl.textContent = '0:00 / 0:00';
         }
     });
-    
+
     // Also sync review audio buttons
     updateReviewAudioUI();
 }
@@ -1048,11 +1048,11 @@ function setupAudioListeners() {
         const dur = audio.duration || 0;
         const activeSlider = document.querySelector(`.seek-slider[data-id="${appState.currentPlayingId}"]`);
         const activeTimeLbl = document.querySelector(`.time-label[data-id="${appState.currentPlayingId}"]`);
-        
+
         if (activeSlider && dur > 0) {
             activeSlider.value = (cur / dur) * 100;
         }
-        
+
         if (activeTimeLbl) {
             activeTimeLbl.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
         }
@@ -1085,7 +1085,7 @@ function setVolume(vol) {
     appState.globalVolume = vol;
     audio.volume = appState.isMuted ? 0 : vol;
     localStorage.setItem('vertone_volume', vol.toString());
-    
+
     // Sync all volume inputs
     document.querySelectorAll('.vol-bar').forEach(bar => {
         bar.value = vol;
@@ -1096,11 +1096,11 @@ function toggleMute() {
     appState.isMuted = !appState.isMuted;
     audio.volume = appState.isMuted ? 0 : appState.globalVolume;
     localStorage.setItem('vertone_muted', appState.isMuted.toString());
-    
+
     document.querySelectorAll('.btn-mute').forEach(btn => {
         btn.textContent = appState.isMuted ? '🔇' : '🔊';
     });
-    
+
     document.querySelectorAll('.vol-bar').forEach(bar => {
         bar.value = appState.isMuted ? 0 : appState.globalVolume;
     });
@@ -1115,10 +1115,10 @@ function getVoteStatus(type, id) {
 async function handleVote(type, id, voteType) {
     const storageKey = `vertone_voted_${type}_${id}`;
     const previousVote = localStorage.getItem(storageKey);
-    
+
     let deltaUp = 0;
     let deltaDown = 0;
-    
+
     if (previousVote === voteType) {
         // Toggle off the same vote
         localStorage.removeItem(storageKey);
@@ -1128,13 +1128,13 @@ async function handleVote(type, id, voteType) {
         // Remove previous vote if any
         if (previousVote === 'up') deltaUp = -1;
         if (previousVote === 'down') deltaDown = -1;
-        
+
         // Add new vote
         localStorage.setItem(storageKey, voteType);
         if (voteType === 'up') deltaUp = 1;
         else deltaDown = 1;
     }
-    
+
     // Apply changes locally & save to storage
     if (type === 'track') {
         const item = appState.tracks.find(t => t.id === id);
@@ -1196,7 +1196,7 @@ function updateUserUI() {
     const imgAvatar = document.getElementById('user-avatar-img');
     const emojiAvatar = document.getElementById('user-avatar-emoji');
     const txtUsername = document.getElementById('user-name');
-    
+
     const musicAdminActions = document.getElementById('music-admin-actions');
     const graphicsAdminActions = document.getElementById('graphics-admin-actions');
 
@@ -1206,7 +1206,7 @@ function updateUserUI() {
             menuProfile.style.display = 'flex';
             menuProfile.classList.remove('hidden');
         }
-        
+
         if (appState.user.avatar) {
             if (imgAvatar) {
                 imgAvatar.src = appState.user.avatar;
@@ -1221,7 +1221,7 @@ function updateUserUI() {
             if (imgAvatar) imgAvatar.style.display = 'none';
             if (emojiAvatar) emojiAvatar.style.display = 'block';
         }
-        
+
         if (txtUsername) txtUsername.textContent = appState.user.username;
     } else {
         if (btnLogin) btnLogin.style.display = 'flex';
@@ -1831,7 +1831,7 @@ function applyLanguage(lang) {
             okladki: 'Обложки'
         }
     };
-    
+
     // Update breadcrumb category title
     const currentCategory = appState.activeCategory;
     const titleEl = document.getElementById('graphics-list-category-title');
@@ -1845,520 +1845,519 @@ function applyLanguage(lang) {
     renderReviews();
 }
 
-// Discord Login Handlers
+// Admin Login Handlers
 function setupDiscordLogin() {
-function setupDiscordLogin() {
-    const loginModal = document.getElementById('discord-login-modal');
-    const btnOpenLogin = document.getElementById('btn-discord-login');
-    const btnCloseLogin = document.getElementById('btn-close-discord-login');
-    const menuProfile = document.getElementById('user-profile-menu');
-    const dropdown = document.getElementById('user-profile-dropdown');
-    const btnLogout = document.getElementById('btn-discord-logout');
-    
-    const adminForm = document.getElementById('admin-login-form');
-    const userInput = document.getElementById('admin-username-input');
-    const passInput = document.getElementById('admin-password-input');
-    const errorDiv = document.getElementById('admin-login-error');
+        const loginModal = document.getElementById('discord-login-modal');
+        const btnOpenLogin = document.getElementById('btn-discord-login');
+        const btnCloseLogin = document.getElementById('btn-close-discord-login');
+        const menuProfile = document.getElementById('user-profile-menu');
+        const dropdown = document.getElementById('user-profile-dropdown');
+        const btnLogout = document.getElementById('btn-discord-logout');
 
-    if (btnOpenLogin && loginModal) {
-        btnOpenLogin.addEventListener('click', () => {
-            if (userInput) userInput.value = '';
-            if (passInput) passInput.value = '';
-            if (errorDiv) errorDiv.classList.add('hidden');
-            loginModal.classList.add('show');
-        });
-    }
+        const adminForm = document.getElementById('admin-login-form');
+        const userInput = document.getElementById('admin-username-input');
+        const passInput = document.getElementById('admin-password-input');
+        const errorDiv = document.getElementById('admin-login-error');
 
-    if (btnCloseLogin && loginModal) {
-        btnCloseLogin.addEventListener('click', () => {
-            loginModal.classList.remove('show');
-        });
-    }
-
-    if (adminForm) {
-        adminForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const username = userInput.value.trim();
-            const password = passInput.value.trim();
-
-            if (username === 'The_vertis' && password === 'Vertisvertone123!@#') {
-                const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
-                localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
-                appState.user = adminUser;
-                appState.isOwner = true;
+        if (btnOpenLogin && loginModal) {
+            btnOpenLogin.addEventListener('click', () => {
+                if (userInput) userInput.value = '';
+                if (passInput) passInput.value = '';
                 if (errorDiv) errorDiv.classList.add('hidden');
+                loginModal.classList.add('show');
+            });
+        }
+
+        if (btnCloseLogin && loginModal) {
+            btnCloseLogin.addEventListener('click', () => {
                 loginModal.classList.remove('show');
+            });
+        }
+
+        if (adminForm) {
+            adminForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = userInput.value.trim();
+                const password = passInput.value.trim();
+
+                if (username === 'The_vertis' && password === 'Vertisvertone123!@#') {
+                    const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
+                    localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
+                    appState.user = adminUser;
+                    appState.isOwner = true;
+                    if (errorDiv) errorDiv.classList.add('hidden');
+                    loginModal.classList.remove('show');
+                    updateUserUI();
+                    showCustomAlert("Zalogowano pomyślnie jako administrator!");
+                } else {
+                    if (errorDiv) errorDiv.classList.remove('hidden');
+                }
+            });
+        }
+
+        // Profile Dropdown Toggle
+        if (menuProfile && dropdown) {
+            menuProfile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', () => {
+                dropdown.classList.add('hidden');
+            });
+        }
+
+        if (btnLogout) {
+            btnLogout.addEventListener('click', () => {
+                localStorage.removeItem('vertone_session_user');
+                appState.user = null;
+                appState.isOwner = false;
                 updateUserUI();
-                showCustomAlert("Zalogowano pomyślnie jako administrator!");
-            } else {
-                if (errorDiv) errorDiv.classList.remove('hidden');
-            }
-        });
-    }
-
-    // Profile Dropdown Toggle
-    if (menuProfile && dropdown) {
-        menuProfile.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', () => {
-            dropdown.classList.add('hidden');
-        });
-    }
-
-    if (btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            localStorage.removeItem('vertone_session_user');
-            appState.user = null;
-            appState.isOwner = false;
-            updateUserUI();
-        });
-    }
-}
-
-function handleDiscordHashLogin() {
-    // Legacy OAuth hash redirect handler disabled
-}
-
-// --- MODALS ENGINE ---
-function showModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.add('show');
-    }
-}
-
-function closeModal(id) {
-    const modal = document.getElementById(id);
-    if (modal) {
-        modal.classList.remove('show');
-        // Clear errors if login modal
-        if (id === 'login-modal') {
-            document.getElementById('login-error-msg').classList.add('hidden');
-            document.getElementById('admin-password').value = '';
+            });
         }
     }
-}
 
-function showCustomConfirm(message, onAccept, title = null) {
-    const modal = document.getElementById('confirm-modal');
-    if (!modal) return;
-    
-    const msgEl = document.getElementById('confirm-modal-message');
-    const titleEl = document.getElementById('confirm-modal-title');
-    const acceptBtn = document.getElementById('btn-confirm-accept');
-    const cancelBtn = document.getElementById('btn-confirm-cancel');
-    
-    titleEl.textContent = title || (typeof t === 'function' ? t('confirm_title') : "Potwierdzenie");
-    msgEl.textContent = message;
-    
-    modal.classList.add('show');
-    
-    // Clear old event listeners by cloning
-    const newAccept = acceptBtn.cloneNode(true);
-    acceptBtn.parentNode.replaceChild(newAccept, acceptBtn);
-    
-    const newCancel = cancelBtn.cloneNode(true);
-    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
-    
-    newAccept.addEventListener('click', () => {
-        modal.classList.remove('show');
-        if (onAccept) onAccept();
-    });
-    
-    newCancel.addEventListener('click', () => {
-        modal.classList.remove('show');
-    });
-}
+    function handleDiscordHashLogin() {
+        // Legacy OAuth hash redirect handler disabled
+    }
 
-function showCustomAlert(message, title = null) {
-    const modal = document.getElementById('alert-modal');
-    if (!modal) return;
-    
-    const msgEl = document.getElementById('alert-modal-message');
-    const titleEl = document.getElementById('alert-modal-title');
-    const closeBtn = document.getElementById('btn-alert-close');
-    
-    titleEl.textContent = title || (typeof t === 'function' ? t('alert_title') : "Powiadomienie");
-    msgEl.textContent = message;
-    
-    modal.classList.add('show');
-    
-    const newClose = closeBtn.cloneNode(true);
-    closeBtn.parentNode.replaceChild(newClose, closeBtn);
-    
-    newClose.addEventListener('click', () => {
-        modal.classList.remove('show');
-    });
-}
+    // --- MODALS ENGINE ---
+    function showModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.add('show');
+        }
+    }
 
-function setupModalEvents() {
-    // Close triggers
-    document.querySelectorAll('.modal-close-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const modal = btn.closest('.modal-overlay');
-            closeModal(modal.id);
-        });
-    });
-    
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal(modal.id);
+    function closeModal(id) {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.classList.remove('show');
+            // Clear errors if login modal
+            if (id === 'login-modal') {
+                document.getElementById('login-error-msg').classList.add('hidden');
+                document.getElementById('admin-password').value = '';
             }
-        });
-    });
-    
-    // Add cancel buttons triggers
-    const cancelTrack = document.getElementById('btn-cancel-track');
-    if (cancelTrack) cancelTrack.addEventListener('click', () => closeModal('add-track-modal'));
-    
-    const cancelGraphic = document.getElementById('btn-cancel-graphic');
-    if (cancelGraphic) cancelGraphic.addEventListener('click', () => closeModal('add-graphic-modal'));
-    
-    const cancelReview = document.getElementById('btn-cancel-review');
-    if (cancelReview) cancelReview.addEventListener('click', () => closeModal('write-review-modal'));
+        }
+    }
 
-    // Modal triggers opening
-    const addTrackBtn = document.getElementById('btn-add-track-modal');
-    if (addTrackBtn) {
-        addTrackBtn.addEventListener('click', () => {
-            const titleInput = document.getElementById('track-title-input');
-            const fileInput = document.getElementById('track-file-input');
-            const fileStatus = document.getElementById('track-file-status');
-            if (titleInput) titleInput.value = '';
-            if (fileInput) fileInput.value = '';
-            if (fileStatus) fileStatus.classList.add('hidden');
-            showModal('add-track-modal');
+    function showCustomConfirm(message, onAccept, title = null) {
+        const modal = document.getElementById('confirm-modal');
+        if (!modal) return;
+
+        const msgEl = document.getElementById('confirm-modal-message');
+        const titleEl = document.getElementById('confirm-modal-title');
+        const acceptBtn = document.getElementById('btn-confirm-accept');
+        const cancelBtn = document.getElementById('btn-confirm-cancel');
+
+        titleEl.textContent = title || (typeof t === 'function' ? t('confirm_title') : "Potwierdzenie");
+        msgEl.textContent = message;
+
+        modal.classList.add('show');
+
+        // Clear old event listeners by cloning
+        const newAccept = acceptBtn.cloneNode(true);
+        acceptBtn.parentNode.replaceChild(newAccept, acceptBtn);
+
+        const newCancel = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+        newAccept.addEventListener('click', () => {
+            modal.classList.remove('show');
+            if (onAccept) onAccept();
+        });
+
+        newCancel.addEventListener('click', () => {
+            modal.classList.remove('show');
         });
     }
 
-    document.querySelectorAll('.btn-add-graphic-modal, #btn-add-graphic-modal').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const titleInput = document.getElementById('graphic-title-input');
-            const fileInput = document.getElementById('graphic-file-input');
-            const fileStatus = document.getElementById('graphic-file-status');
-            const catSelect = document.getElementById('graphic-category-select');
-            if (titleInput) titleInput.value = '';
-            if (fileInput) fileInput.value = '';
-            if (fileStatus) fileStatus.classList.add('hidden');
-            if (catSelect) catSelect.value = appState.activeCategory || 'bannery';
-            showModal('add-graphic-modal');
-        });
-    });
+    function showCustomAlert(message, title = null) {
+        const modal = document.getElementById('alert-modal');
+        if (!modal) return;
 
-    const writeReviewBtn = document.getElementById('btn-write-review-modal');
-    if (writeReviewBtn) {
-        writeReviewBtn.addEventListener('click', () => {
-            const authorInput = document.getElementById('review-author-input');
-            const contentInput = document.getElementById('review-content-input');
-            const beforeInput = document.getElementById('review-before-input');
-            const afterInput = document.getElementById('review-after-input');
-            const beforeStatus = document.getElementById('review-before-status');
-            const afterStatus = document.getElementById('review-after-status');
-            if (authorInput) authorInput.value = '';
-            if (contentInput) contentInput.value = '';
-            if (beforeInput) beforeInput.value = '';
-            if (afterInput) afterInput.value = '';
-            if (beforeStatus) beforeStatus.classList.add('hidden');
-            if (afterStatus) afterStatus.classList.add('hidden');
-            appReviewRating = 5;
-            syncStars(5);
-            showModal('write-review-modal');
+        const msgEl = document.getElementById('alert-modal-message');
+        const titleEl = document.getElementById('alert-modal-title');
+        const closeBtn = document.getElementById('btn-alert-close');
+
+        titleEl.textContent = title || (typeof t === 'function' ? t('alert_title') : "Powiadomienie");
+        msgEl.textContent = message;
+
+        modal.classList.add('show');
+
+        const newClose = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newClose, closeBtn);
+
+        newClose.addEventListener('click', () => {
+            modal.classList.remove('show');
         });
     }
 
-    // File Drag & Drop events
-    setupFileDropzone('track-file-dropzone', 'track-file-input', 'track-file-status', 'track-file-name');
-    setupFileDropzone('graphic-file-dropzone', 'graphic-file-input', 'graphic-file-status', 'graphic-file-name');
-    setupFileDropzone('review-before-dropzone', 'review-before-input', 'review-before-status', 'review-before-name');
-    setupFileDropzone('review-after-dropzone', 'review-after-input', 'review-after-status', 'review-after-name');
+    function setupModalEvents() {
+        // Close triggers
+        document.querySelectorAll('.modal-close-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = btn.closest('.modal-overlay');
+                closeModal(modal.id);
+            });
+        });
 
-    // Add track submit
-    const submitTrack = document.getElementById('btn-submit-track');
-    if (submitTrack) submitTrack.addEventListener('click', submitNewTrack);
-    
-    // Add graphic submit
-    const submitGraphic = document.getElementById('btn-submit-graphic');
-    if (submitGraphic) submitGraphic.addEventListener('click', submitNewGraphic);
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal(modal.id);
+                }
+            });
+        });
 
-    // Stars review setup
-    setupStarsRating();
-    const submitReview = document.getElementById('btn-submit-review');
-    if (submitReview) submitReview.addEventListener('click', submitNewReview);
-}
+        // Add cancel buttons triggers
+        const cancelTrack = document.getElementById('btn-cancel-track');
+        if (cancelTrack) cancelTrack.addEventListener('click', () => closeModal('add-track-modal'));
 
-// File dropzone utilities
-function setupFileDropzone(zoneId, inputId, statusId, nameId) {
-    const zone = document.getElementById(zoneId);
-    const input = document.getElementById(inputId);
-    const status = document.getElementById(statusId);
-    if (!zone || !input) return;
+        const cancelGraphic = document.getElementById('btn-cancel-graphic');
+        if (cancelGraphic) cancelGraphic.addEventListener('click', () => closeModal('add-graphic-modal'));
 
-    function updateDropzoneUI(file) {
-        if (!file) return;
-        const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
-        const icon = isAudio ? '🎵' : '🖼️';
-        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        zone.innerHTML = `
+        const cancelReview = document.getElementById('btn-cancel-review');
+        if (cancelReview) cancelReview.addEventListener('click', () => closeModal('write-review-modal'));
+
+        // Modal triggers opening
+        const addTrackBtn = document.getElementById('btn-add-track-modal');
+        if (addTrackBtn) {
+            addTrackBtn.addEventListener('click', () => {
+                const titleInput = document.getElementById('track-title-input');
+                const fileInput = document.getElementById('track-file-input');
+                const fileStatus = document.getElementById('track-file-status');
+                if (titleInput) titleInput.value = '';
+                if (fileInput) fileInput.value = '';
+                if (fileStatus) fileStatus.classList.add('hidden');
+                showModal('add-track-modal');
+            });
+        }
+
+        document.querySelectorAll('.btn-add-graphic-modal, #btn-add-graphic-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const titleInput = document.getElementById('graphic-title-input');
+                const fileInput = document.getElementById('graphic-file-input');
+                const fileStatus = document.getElementById('graphic-file-status');
+                const catSelect = document.getElementById('graphic-category-select');
+                if (titleInput) titleInput.value = '';
+                if (fileInput) fileInput.value = '';
+                if (fileStatus) fileStatus.classList.add('hidden');
+                if (catSelect) catSelect.value = appState.activeCategory || 'bannery';
+                showModal('add-graphic-modal');
+            });
+        });
+
+        const writeReviewBtn = document.getElementById('btn-write-review-modal');
+        if (writeReviewBtn) {
+            writeReviewBtn.addEventListener('click', () => {
+                const authorInput = document.getElementById('review-author-input');
+                const contentInput = document.getElementById('review-content-input');
+                const beforeInput = document.getElementById('review-before-input');
+                const afterInput = document.getElementById('review-after-input');
+                const beforeStatus = document.getElementById('review-before-status');
+                const afterStatus = document.getElementById('review-after-status');
+                if (authorInput) authorInput.value = '';
+                if (contentInput) contentInput.value = '';
+                if (beforeInput) beforeInput.value = '';
+                if (afterInput) afterInput.value = '';
+                if (beforeStatus) beforeStatus.classList.add('hidden');
+                if (afterStatus) afterStatus.classList.add('hidden');
+                appReviewRating = 5;
+                syncStars(5);
+                showModal('write-review-modal');
+            });
+        }
+
+        // File Drag & Drop events
+        setupFileDropzone('track-file-dropzone', 'track-file-input', 'track-file-status', 'track-file-name');
+        setupFileDropzone('graphic-file-dropzone', 'graphic-file-input', 'graphic-file-status', 'graphic-file-name');
+        setupFileDropzone('review-before-dropzone', 'review-before-input', 'review-before-status', 'review-before-name');
+        setupFileDropzone('review-after-dropzone', 'review-after-input', 'review-after-status', 'review-after-name');
+
+        // Add track submit
+        const submitTrack = document.getElementById('btn-submit-track');
+        if (submitTrack) submitTrack.addEventListener('click', submitNewTrack);
+
+        // Add graphic submit
+        const submitGraphic = document.getElementById('btn-submit-graphic');
+        if (submitGraphic) submitGraphic.addEventListener('click', submitNewGraphic);
+
+        // Stars review setup
+        setupStarsRating();
+        const submitReview = document.getElementById('btn-submit-review');
+        if (submitReview) submitReview.addEventListener('click', submitNewReview);
+    }
+
+    // File dropzone utilities
+    function setupFileDropzone(zoneId, inputId, statusId, nameId) {
+        const zone = document.getElementById(zoneId);
+        const input = document.getElementById(inputId);
+        const status = document.getElementById(statusId);
+        if (!zone || !input) return;
+
+        function updateDropzoneUI(file) {
+            if (!file) return;
+            const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
+            const icon = isAudio ? '🎵' : '🖼️';
+            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            zone.innerHTML = `
             <span class="upload-icon">${icon}</span>
             <span class="upload-text" style="color: var(--color-blue-light); font-weight: 700; word-break: break-all; max-width: 90%; font-size: 13px;">${file.name}</span>
             <span class="upload-sub" style="color: var(--color-success); font-weight: 600;">Wybrano plik (${sizeMB} MB) • Kliknij, aby zmienić</span>
         `;
-        if (status) status.classList.add('hidden');
-    }
-    
-    zone.addEventListener('click', () => input.click());
-    
-    zone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        zone.classList.add('dragover');
-    });
-    
-    zone.addEventListener('dragleave', () => {
-        zone.classList.remove('dragover');
-    });
-    
-    zone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        zone.classList.remove('dragover');
-        if (e.dataTransfer.files.length > 0) {
-            input.files = e.dataTransfer.files;
-            updateDropzoneUI(input.files[0]);
+            if (status) status.classList.add('hidden');
         }
-    });
-    
-    input.addEventListener('change', () => {
-        if (input.files.length > 0) {
-            updateDropzoneUI(input.files[0]);
-        }
-    });
-}
 
-function readFileAsArrayBuffer(file) {
-    return new Promise((resolve, reject) => {
-        if (!file) {
-            resolve(null);
+        zone.addEventListener('click', () => input.click());
+
+        zone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zone.classList.add('dragover');
+        });
+
+        zone.addEventListener('dragleave', () => {
+            zone.classList.remove('dragover');
+        });
+
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                updateDropzoneUI(input.files[0]);
+            }
+        });
+
+        input.addEventListener('change', () => {
+            if (input.files.length > 0) {
+                updateDropzoneUI(input.files[0]);
+            }
+        });
+    }
+
+    function readFileAsArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+            if (!file) {
+                resolve(null);
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    async function submitNewTrack() {
+        const titleInput = document.getElementById('track-title-input');
+        const fileInput = document.getElementById('track-file-input');
+
+        const title = titleInput.value.trim();
+        if (!title) {
+            showCustomAlert(t('review_fields_required') || "Podaj tytuł utworu!");
             return;
         }
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(e);
-        reader.readAsArrayBuffer(file);
-    });
-}
 
-async function submitNewTrack() {
-    const titleInput = document.getElementById('track-title-input');
-    const fileInput = document.getElementById('track-file-input');
-    
-    const title = titleInput.value.trim();
-    if (!title) {
-        showCustomAlert(t('review_fields_required') || "Podaj tytuł utworu!");
-        return;
-    }
-    
-    if (fileInput.files.length === 0) {
-        showCustomAlert(t('review_fields_required') || "Wybierz plik audio z dysku!");
-        return;
-    }
-    
-    const file = fileInput.files[0];
-    
-    try {
-        const arrayBuffer = await readFileAsArrayBuffer(file);
-        
-        // Save to IndexedDB
-        const newTrack = {
-            id: 'track_' + Date.now(),
-            title: title,
-            votesUp: 0,
-            votesDown: 0,
-            audioData: arrayBuffer,
-            fileType: file.type,
-            feedbacks: []
-        };
-        
-        await saveToDB('tracks', newTrack);
-        closeModal('add-track-modal');
-        await loadTracks();
-        renderTracks();
-    } catch (e) {
-        console.error("Failed to save track in IndexedDB:", e);
-        showCustomAlert("Błąd podczas zapisywania pliku!");
-    }
-}
-
-async function submitNewGraphic() {
-    const titleInput = document.getElementById('graphic-title-input');
-    const fileInput = document.getElementById('graphic-file-input');
-    const catSelect = document.getElementById('graphic-category-select');
-    
-    const title = titleInput.value.trim();
-    if (!title) {
-        showCustomAlert(t('review_fields_required') || "Podaj tytuł pracy!");
-        return;
-    }
-    
-    if (fileInput.files.length === 0) {
-        showCustomAlert("Wybierz plik graficzny z dysku!");
-        return;
-    }
-    
-    const file = fileInput.files[0];
-    const category = catSelect ? catSelect.value : appState.activeCategory;
-    
-    try {
-        const arrayBuffer = await readFileAsArrayBuffer(file);
-        
-        const newGraphic = {
-            id: 'graphic_' + Date.now(),
-            category: category,
-            title: title,
-            votesUp: 0,
-            votesDown: 0,
-            imageData: arrayBuffer,
-            fileType: file.type,
-            feedbacks: []
-        };
-        
-        await saveToDB('graphics', newGraphic);
-        closeModal('add-graphic-modal');
-        appState.activeCategory = category;
-        
-        // Update Title if currently in list view
-        const labels = {
-            bannery: 'Bannery',
-            avatory: 'Avatary',
-            plakaty: 'Plakaty',
-            panele: 'Panele',
-            okladki: 'Okładki'
-        };
-        const titleEl = document.getElementById('graphics-list-category-title');
-        if (titleEl) {
-            titleEl.textContent = `Portfolio // Grafiki // ${labels[category] || category}`;
+        if (fileInput.files.length === 0) {
+            showCustomAlert(t('review_fields_required') || "Wybierz plik audio z dysku!");
+            return;
         }
-        
-        await loadGraphics();
-        renderGraphics();
-        showPortfolioView('graphics-list');
-    } catch(e) {
-        console.error("Failed to save graphic in DB:", e);
-        showCustomAlert("Błąd zapisu grafiki w bazie danych!");
-    }
-}
 
-// Stars Rating Selector
-let appReviewRating = 5;
-function setupStarsRating() {
-    const stars = document.querySelectorAll('#rating-selector .star');
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const rating = parseInt(star.getAttribute('data-rating'));
-            appReviewRating = rating;
-            syncStars(rating);
+        const file = fileInput.files[0];
+
+        try {
+            const arrayBuffer = await readFileAsArrayBuffer(file);
+
+            // Save to IndexedDB
+            const newTrack = {
+                id: 'track_' + Date.now(),
+                title: title,
+                votesUp: 0,
+                votesDown: 0,
+                audioData: arrayBuffer,
+                fileType: file.type,
+                feedbacks: []
+            };
+
+            await saveToDB('tracks', newTrack);
+            closeModal('add-track-modal');
+            await loadTracks();
+            renderTracks();
+        } catch (e) {
+            console.error("Failed to save track in IndexedDB:", e);
+            showCustomAlert("Błąd podczas zapisywania pliku!");
+        }
+    }
+
+    async function submitNewGraphic() {
+        const titleInput = document.getElementById('graphic-title-input');
+        const fileInput = document.getElementById('graphic-file-input');
+        const catSelect = document.getElementById('graphic-category-select');
+
+        const title = titleInput.value.trim();
+        if (!title) {
+            showCustomAlert(t('review_fields_required') || "Podaj tytuł pracy!");
+            return;
+        }
+
+        if (fileInput.files.length === 0) {
+            showCustomAlert("Wybierz plik graficzny z dysku!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const category = catSelect ? catSelect.value : appState.activeCategory;
+
+        try {
+            const arrayBuffer = await readFileAsArrayBuffer(file);
+
+            const newGraphic = {
+                id: 'graphic_' + Date.now(),
+                category: category,
+                title: title,
+                votesUp: 0,
+                votesDown: 0,
+                imageData: arrayBuffer,
+                fileType: file.type,
+                feedbacks: []
+            };
+
+            await saveToDB('graphics', newGraphic);
+            closeModal('add-graphic-modal');
+            appState.activeCategory = category;
+
+            // Update Title if currently in list view
+            const labels = {
+                bannery: 'Bannery',
+                avatory: 'Avatary',
+                plakaty: 'Plakaty',
+                panele: 'Panele',
+                okladki: 'Okładki'
+            };
+            const titleEl = document.getElementById('graphics-list-category-title');
+            if (titleEl) {
+                titleEl.textContent = `Portfolio // Grafiki // ${labels[category] || category}`;
+            }
+
+            await loadGraphics();
+            renderGraphics();
+            showPortfolioView('graphics-list');
+        } catch (e) {
+            console.error("Failed to save graphic in DB:", e);
+            showCustomAlert("Błąd zapisu grafiki w bazie danych!");
+        }
+    }
+
+    // Stars Rating Selector
+    let appReviewRating = 5;
+    function setupStarsRating() {
+        const stars = document.querySelectorAll('#rating-selector .star');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                appReviewRating = rating;
+                syncStars(rating);
+            });
+        });
+    }
+
+    function syncStars(rating) {
+        const stars = document.querySelectorAll('#rating-selector .star');
+        stars.forEach(star => {
+            const itemRating = parseInt(star.getAttribute('data-rating'));
+            if (itemRating <= rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    async function submitNewReview() {
+        const author = document.getElementById('review-author-input').value.trim();
+        const text = document.getElementById('review-content-input').value.trim();
+
+        if (!author) {
+            showCustomAlert(t('review_author_required') || "Wpisz swoje imię!");
+            return;
+        }
+        if (!text) {
+            showCustomAlert(t('review_text_required') || "Wpisz treść opinii!");
+            return;
+        }
+
+        // Find active avatar preset
+        const activeAvatarItem = document.querySelector('.avatar-presets-grid .avatar-preset-item.active');
+        const avatar = activeAvatarItem ? activeAvatarItem.getAttribute('data-avatar') : 'user1';
+
+        const beforeInput = document.getElementById('review-before-input');
+        const afterInput = document.getElementById('review-after-input');
+
+        const beforeFile = beforeInput.files.length > 0 ? beforeInput.files[0] : null;
+        const afterFile = afterInput.files.length > 0 ? afterInput.files[0] : null;
+
+        try {
+            const beforeData = await readFileAsArrayBuffer(beforeFile);
+            const afterData = await readFileAsArrayBuffer(afterFile);
+
+            const newReview = {
+                id: 'rev_' + Date.now(),
+                author: author,
+                rating: appReviewRating,
+                text: text,
+                votesUp: 0,
+                votesDown: 0,
+                avatar: avatar,
+                beforeAudioData: beforeData,
+                beforeFileType: beforeFile ? beforeFile.type : null,
+                afterAudioData: afterData,
+                afterFileType: afterFile ? afterFile.type : null
+            };
+
+            await saveToDB('reviews', newReview);
+            closeModal('write-review-modal');
+            await loadReviews();
+            renderReviews();
+        } catch (e) {
+            console.error("Failed to save review:", e);
+            showCustomAlert("Błąd podczas zapisywania opinii!");
+        }
+    }
+
+
+    // --- LIGHTBOX GALLERY SYSTEM ---
+    function setupLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        const closeBtn = document.getElementById('btn-close-lightbox');
+
+        closeBtn.addEventListener('click', () => closeLightbox());
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+
+    function openLightbox(url, title) {
+        const lightbox = document.getElementById('lightbox');
+        const image = document.getElementById('lightbox-image');
+        const caption = document.getElementById('lightbox-title-text');
+
+        image.src = url;
+        caption.textContent = title;
+        lightbox.classList.add('show');
+    }
+
+    function closeLightbox() {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('show');
+    }
+
+    // Preset avatars click listeners logic for write-review modal
+    document.querySelectorAll('.avatar-preset-item').forEach(item => {
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.avatar-preset-item').forEach(a => a.classList.remove('active'));
+            item.classList.add('active');
         });
     });
-}
-
-function syncStars(rating) {
-    const stars = document.querySelectorAll('#rating-selector .star');
-    stars.forEach(star => {
-        const itemRating = parseInt(star.getAttribute('data-rating'));
-        if (itemRating <= rating) {
-            star.classList.add('active');
-        } else {
-            star.classList.remove('active');
-        }
-    });
-}
-
-async function submitNewReview() {
-    const author = document.getElementById('review-author-input').value.trim();
-    const text = document.getElementById('review-content-input').value.trim();
-    
-    if (!author) {
-        showCustomAlert(t('review_author_required') || "Wpisz swoje imię!");
-        return;
-    }
-    if (!text) {
-        showCustomAlert(t('review_text_required') || "Wpisz treść opinii!");
-        return;
-    }
-    
-    // Find active avatar preset
-    const activeAvatarItem = document.querySelector('.avatar-presets-grid .avatar-preset-item.active');
-    const avatar = activeAvatarItem ? activeAvatarItem.getAttribute('data-avatar') : 'user1';
-    
-    const beforeInput = document.getElementById('review-before-input');
-    const afterInput = document.getElementById('review-after-input');
-    
-    const beforeFile = beforeInput.files.length > 0 ? beforeInput.files[0] : null;
-    const afterFile = afterInput.files.length > 0 ? afterInput.files[0] : null;
-    
-    try {
-        const beforeData = await readFileAsArrayBuffer(beforeFile);
-        const afterData = await readFileAsArrayBuffer(afterFile);
-        
-        const newReview = {
-            id: 'rev_' + Date.now(),
-            author: author,
-            rating: appReviewRating,
-            text: text,
-            votesUp: 0,
-            votesDown: 0,
-            avatar: avatar,
-            beforeAudioData: beforeData,
-            beforeFileType: beforeFile ? beforeFile.type : null,
-            afterAudioData: afterData,
-            afterFileType: afterFile ? afterFile.type : null
-        };
-        
-        await saveToDB('reviews', newReview);
-        closeModal('write-review-modal');
-        await loadReviews();
-        renderReviews();
-    } catch (e) {
-        console.error("Failed to save review:", e);
-        showCustomAlert("Błąd podczas zapisywania opinii!");
-    }
-}
-
-
-// --- LIGHTBOX GALLERY SYSTEM ---
-function setupLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    const closeBtn = document.getElementById('btn-close-lightbox');
-    
-    closeBtn.addEventListener('click', () => closeLightbox());
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox) {
-            closeLightbox();
-        }
-    });
-}
-
-function openLightbox(url, title) {
-    const lightbox = document.getElementById('lightbox');
-    const image = document.getElementById('lightbox-image');
-    const caption = document.getElementById('lightbox-title-text');
-    
-    image.src = url;
-    caption.textContent = title;
-    lightbox.classList.add('show');
-}
-
-function closeLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    lightbox.classList.remove('show');
-}
-
-// Preset avatars click listeners logic for write-review modal
-document.querySelectorAll('.avatar-preset-item').forEach(item => {
-    item.addEventListener('click', () => {
-        document.querySelectorAll('.avatar-preset-item').forEach(a => a.classList.remove('active'));
-        item.classList.add('active');
-    });
-});
