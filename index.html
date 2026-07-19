@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertone // Portfolio & Usługi Muzyczne i Graficzne</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Background glowing nebula -->
+    <div class="glow-bg"></div>
+
+    <!-- Active Owner Mode Indicator Banner -->
+    <div class="app-container">
+        <!-- Top Header Bar -->
+        <header class="top-header">
+            <div class="top-header-left">
+            </div>
+            
+            <div class="top-header-right" style="display: flex; align-items: center; gap: 15px;">
+                <!-- Admin Login Button -->
+                <button class="btn-discord-login" id="btn-discord-login">
+                    <span style="font-size: 14px;">🔑</span>
+                    <span data-i18n="btn_login">Zaloguj</span>
+                </button>
+
+                <!-- Discord Profile Container (Initially Hidden) -->
+                <div class="user-profile-btn hidden" id="user-profile-menu">
+                    <div class="user-avatar-wrapper">
+                        <span id="user-avatar-emoji">👤</span>
+                        <img id="user-avatar-img" src="" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <span id="user-name">--</span>
+                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; margin-left: 2px;">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                    
+                    <!-- Dropdown Panel -->
+                    <div class="user-profile-dropdown hidden" id="user-profile-dropdown">
+                        <button class="dropdown-item" id="btn-discord-logout">
+                            <span>🚪</span> <span data-i18n="btn_logout">Wyloguj się</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-settings" id="btn-open-settings" title="Ustawienia">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <span class="logo-main">Vertone</span>
+                    </div>
+                </div>
+
+                <nav class="sidebar-tabs">
+                    <button class="tab-btn active" data-target="tab-courses">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                        <span data-i18n="tab_courses">Kursy</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-portfolio">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                            </path>
+                        </svg>
+                        <span data-i18n="tab_portfolio">Portfolio</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-reviews">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span data-i18n="tab_reviews">Opinie</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-services">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                        <span data-i18n="tab_services">Usługi</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-socials" style="display: none;">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span data-i18n="tab_socials">Sociale</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-faq">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span data-i18n="tab_faq">FAQ</span>
+                    </button>
+                    <button class="tab-btn" data-target="tab-privacy">
+                        <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
+                            stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span style="line-height: 1.2;" data-i18n="tab_privacy">Polityka prywatności<br>i regulamin</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+
+                <!-- TAB 1: KURSY (Transferred E-books tab from Mixly) -->
+                <section id="tab-courses" class="tab-content active">
+                    <div class="content-header">
+                        <h2 data-i18n="courses_title">Kursy i E-booki</h2>
+                        <p class="subtitle" data-i18n="courses_subtitle">Dowiedz się wielu nowych rzeczy w muzyce i nie tylko dzięki naszym e-bookom!</p>
+                    </div>
+
+                    <div class="grid-layout col-2" style="margin-top: 20px; align-items: stretch;">
+                        <!-- Course 1 -->
+                        <div class="card glass highlight-blue"
+                            style="padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center;">
+                                    <div class="ebook-cover-wrapper">
+                                        <img src="grafiki/mix_master_ebook.png" alt="Mix & Master Course Cover"
+                                            class="ebook-img">
+                                    </div>
+                                    <div>
+                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;" data-i18n="course_1_title">Pełny kurs Mixu i masteru</h3>
+                                        <span style="font-size: 11px; color: var(--color-blue-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="course_1_learn">Z tego kursu dowiesz się:</span>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 24px;">
+                                    <ul class="bullet-list">
+                                        <li><span>●</span> <span data-i18n="c1_b1">Czym tak naprawdę jest Mix/mastering i z czego sie składa</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b2">Jakie są rodzaje wtyczek</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b3">Jakie są rodzaje kompresorów</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b4">Jak działają wtyczki m.in:</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b5">EQ</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b6">Kompresory</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b7">Saturatory/Distortion</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b8">Pogłosy</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b9">Delay'e</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b10">De-essery</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b11">Limitery/Bramki szumów</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b12">Jaki DAW najlepiej wybrać pod twoje preferencje</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b13">Jak dobrze nagrać wokal w domowych warunkach</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b14">Czym jest gain staging i jak go zrobić oraz jak zrobić leveling</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b15">Jak używać autotune i jak nastroić wokal</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b16">Routing & Side chainy - co to i jak zrobić</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b17">Zakresy częstotliwości, tonacje</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b18">Jak działają pokrętła na wtyczkach oraz opcje + filmy z tym związane</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="course-footer">
+                                <div class="soon-badge highlight-blue" data-i18n="soon">Wkrótce</div>
+                            </div>
+                        </div>
+
+                        <!-- Course 2 -->
+                        <div class="card glass highlight-purple"
+                            style="padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; gap: 20px; margin-bottom: 20px; align-items: center;">
+                                    <div class="ebook-cover-wrapper">
+                                        <img src="grafiki/acoustics_ebook.png" alt="Acoustics Course Cover"
+                                            class="ebook-img">
+                                    </div>
+                                    <div>
+                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;" data-i18n="course_2_title">Pełny kurs akustyki</h3>
+                                        <span style="font-size: 11px; color: var(--color-purple-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="course_2_learn">Z tego kursu dowiesz się:</span>
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 24px;">
+                                    <ul class="bullet-list purple-bullets">
+                                        <li><span>●</span> <span data-i18n="c2_b1">Czym jest akustyka w pomieszczeniu</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b2">Jak dobrać akustykę do swojego pomieszczenia</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b3">Jak rozmieścić panele, bass-trapy itp. w swoim studio</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b4">DIY budżetowa akustyka</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b5">Czego unikać i na co uważać podczas planowania i tworzenia studia</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="course-footer">
+                                <div class="soon-badge highlight-purple" data-i18n="soon">Wkrótce</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: PORTFOLIO -->
+                <section id="tab-portfolio" class="tab-content">
+                    <!-- 1. MAIN DASHBOARD: Splits -->
+                    <div id="portfolio-dashboard" class="portfolio-split-grid">
+                        <!-- LEFT PANEL: MUSIC -->
+                        <div class="card glass portfolio-panel-half" id="panel-music">
+                            <div class="panel-section-header" style="border-bottom: none; padding-bottom: 0;">
+                                <span class="panel-decor-icon">🎵</span>
+                                <h2>Muzyka</h2>
+                                <p class="section-desc">Możesz przesłuchać zmixowanych przeze mnie utworów i ocenić
+                                    numer za pomocą łapki w górę lub w dół</p>
+                            </div>
+                            <div style="margin-top: auto; padding-top: 20px;">
+                                <button class="btn btn-primary btn-full btn-techno" id="btn-enter-music">
+                                    <span>Sprawdź</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT PANEL: GRAPHICS -->
+                        <div class="card glass portfolio-panel-half" id="panel-graphics">
+                            <div class="panel-section-header" style="border-bottom: none; padding-bottom: 0;">
+                                <span class="panel-decor-icon">🎨</span>
+                                <h2>Grafiki</h2>
+                                <p class="section-desc">Sprawdź stworzone przeze mnie bannery, avatary, okładki,
+                                    plakaty, panele itp.</p>
+                            </div>
+                            <div style="margin-top: auto; padding-top: 20px;">
+                                <button class="btn btn-primary btn-full btn-techno purple-btn" id="btn-enter-graphics">
+                                    <span>Sprawdź</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. MUSIC DETAIL VIEW (Sub-page) -->
+                    <div id="portfolio-music-view" class="portfolio-detail-view hidden">
+                        <div class="detail-view-header"
+                            style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                            <button class="btn btn-secondary btn-small" id="btn-back-music-dashboard">Wróć</button>
+                            <h3 class="monospace"
+                                style="color: var(--color-blue-light); font-size: 15px; margin: 0; font-family: var(--font-tech); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Portfolio // Muzyka</h3>
+                        </div>
+
+                        <!-- Music tracks container -->
+                        <div id="tracks-list-container" class="tracks-list">
+                            <!-- Dynamic tracks will be loaded here -->
+                        </div>
+
+                        <!-- Add track trigger (visible only for owner) -->
+                        <div class="admin-only-action hidden" id="music-admin-actions">
+                            <button class="btn btn-primary btn-techno" id="btn-add-track-modal">
+                                <span>➕ Dodaj Nowy Utwór</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. GRAPHICS CATEGORIES VIEW (Sub-page) -->
+                    <div id="portfolio-graphics-categories-view" class="portfolio-detail-view hidden">
+                        <div class="detail-view-header" style="margin-bottom: 25px;">
+                            <button class="btn btn-secondary btn-small" id="btn-back-graphics-dashboard">Wróć</button>
+                        </div>
+
+                        <!-- Tetris Category Grid -->
+                        <div class="graphics-categories-grid-tetris" id="graphics-categories-selector">
+                            <div class="card glass category-card-btn-tetris" data-category="bannery">
+                                <span class="cat-icon-tetris">🖼️</span>
+                                <h3>Bannery</h3>
+                                <p class="cat-desc">Unikalne, klimatyczne bannery na Twoje sociale</p>
+                            </div>
+                            <div class="card glass category-card-btn-tetris" data-category="avatory">
+                                <span class="cat-icon-tetris">👤</span>
+                                <h3>Avatary</h3>
+                                <p class="cat-desc">Modernistyczne avatary dopasowane do Twojego wizerunku</p>
+                            </div>
+                            <div class="card glass category-card-btn-tetris" data-category="plakaty">
+                                <span class="cat-icon-tetris">📜</span>
+                                <h3>Plakaty</h3>
+                                <p class="cat-desc">Kreatywne i przejrzyste projekty plakatów</p>
+                            </div>
+                            <div class="card glass category-card-btn-tetris" data-category="panele">
+                                <span class="cat-icon-tetris">🎛️</span>
+                                <h3>Panele</h3>
+                                <p class="cat-desc">Schludne panele na Twój kanał streamingowy</p>
+                            </div>
+                            <div class="card glass category-card-btn-tetris" data-category="okladki">
+                                <span class="cat-icon-tetris">💿</span>
+                                <h3>Okładki</h3>
+                                <p class="cat-desc">Profesjonalne okładki na single, playlisty lub albumy</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. GRAPHICS LIST VIEW (Sub-page) -->
+                    <div id="portfolio-graphics-list-view" class="portfolio-detail-view hidden">
+                        <div class="detail-view-header"
+                            style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                            <button class="btn btn-secondary btn-small" id="btn-back-graphics-categories">Wróć</button>
+                            <h3 class="monospace" id="graphics-list-category-title"
+                                style="color: var(--color-purple-light); font-size: 15px; margin: 0; font-family: var(--font-tech); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Portfolio // Grafiki // Bannery</h3>
+                        </div>
+
+                        <!-- Graphics item list container -->
+                        <div id="graphics-items-list-container" class="tracks-list">
+                            <!-- Dynamic graphics cards loaded here -->
+                        </div>
+
+                        <!-- Add graphic trigger (visible only for owner) -->
+                        <div class="admin-only-action hidden" id="graphics-admin-actions"
+                            style="margin-top: 30px; margin-bottom: 30px;">
+                            <button class="btn btn-primary btn-techno" id="btn-add-graphic-modal"
+                                style="background: linear-gradient(135deg, var(--color-purple-dim) 0%, var(--color-purple-main) 100%); box-shadow: 0 0 15px var(--color-purple-glow);">
+                                <span>➕ Dodaj Nową Pracę</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 3: OPINIE -->
+                <section id="tab-reviews" class="tab-content">
+                    <div class="content-header">
+                        <h2>Opinie Klientów</h2>
+                        <p class="subtitle">Przeczytaj opinie ludzi, z którymi miałem przyjemność współpracować.</p>
+                    </div>
+
+                    <!-- Reviews list container -->
+                    <div id="reviews-list-container" class="reviews-list">
+                        <!-- Dynamic opinions loaded here -->
+                    </div>
+
+                    <!-- Write review button -->
+                    <div style="display: flex; justify-content: center; margin-top: 30px;">
+                        <button class="btn btn-primary btn-techno" id="btn-write-review-modal">
+                            ✍️ Wystaw opinię
+                        </button>
+                    </div>
+                </section>
+
+                <!-- TAB 4: USŁUGI -->
+                <section id="tab-services" class="tab-content">
+                    <div class="content-header">
+                        <h2>Moje Usługi</h2>
+                        <p class="subtitle">Zamów profesjonalną usługę muzyczną lub graficzną dopasowaną do Twoich
+                            potrzeb.</p>
+                    </div>
+
+                    <div class="services-direct-grid">
+                        <!-- Left Card: Mix & Master -->
+                        <div class="card glass service-direct-panel highlight-blue">
+                            <div class="service-description-text">
+                                <p class="pitch-text">Szukasz unikatowego, dobrze brzmiącego mixu i głośnego masteru?
+                                    Zamów go już teraz!</p>
+
+                                <div class="price-box">
+                                    <span>Podstawowa cena usługi:</span>
+                                    <strong class="price-tag">50zł</strong>
+                                </div>
+
+                                <div class="detail-section" style="margin-top: 20px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-blue-light); letter-spacing: 0.05em;">
+                                        Co oferuję:</h4>
+                                    <ul class="custom-bracket-list">
+                                        <li>Unikalne brzmienie nadające klimat</li>
+                                        <li>Wyrównywanie ścieżek</li>
+                                        <li>Strojenie wokalu</li>
+                                        <li>Ewentualne wskazówki dotyczące nagrania i nie tylko</li>
+                                        <li>Szybki czas realizacji (max 48h)</li>
+                                        <li>Nielimitowane poprawki</li>
+                                    </ul>
+                                </div>
+
+                                <div class="detail-section" style="margin-top: 20px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-blue-light); letter-spacing: 0.05em;">
+                                        Dodatkowe info:</h4>
+                                    <ul class="custom-bracket-list">
+                                        <li>6 ścieżek w cenie + każda kolejna 5zł</li>
+                                        <li>Stały kontakt przez discorda/instagrama/tiktoka</li>
+                                    </ul>
+                                </div>
+
+                                <div class="detail-section" style="margin-top: 20px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-blue-light); letter-spacing: 0.05em;">
+                                        Czego wymagam:</h4>
+                                    <ul class="custom-bracket-list">
+                                        <li>Dobre i przejrzyste nazewnictwo ścieżek</li>
+                                        <li>Podania tonacji oraz BPM</li>
+                                        <li>Wysłania wersji demonstracyjnej utworu (prevki)</li>
+                                    </ul>
+                                </div>
+
+                                <div class="warning-alert" style="margin-top: 20px;">
+                                    <strong>Uwaga!</strong>
+                                    W przypadku słabej jakości nagrania mam prawo odmówić ci usługi. Zależy mi na twoim zadowoleniu, a sam mix nie uratuje słabego nagrania.
+                                </div>
+
+                                <p class="service-footer-note" style="margin-top: 20px;">
+                                    Jeśli chcesz przesłuchać zmixowane przeze mnie utwory, wejdź w zakładkę portfolio. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+                                </p>
+                            </div>
+                            <div class="service-action-bar" style="margin-top: auto; padding-top: 20px;">
+                                <a href="https://www.instagram.com/vert1ss/" target="_blank"
+                                    class="btn btn-primary btn-order btn-full">Zamów mix & master</a>
+                            </div>
+                        </div>
+
+                        <!-- Right Card: Graphics -->
+                        <div class="card glass service-direct-panel highlight-purple">
+                            <div class="service-description-text">
+                                <p class="pitch-text">Szukasz ładnej, przejrzystej, kreatywnej oraz unikalnej grafiki?
+                                    Zrobię!</p>
+
+                                <div class="detail-section" style="margin-top: 25px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-purple-light); letter-spacing: 0.05em;">
+                                        Ceny:</h4>
+                                    <ul class="prices-dot-list">
+                                        <li>Banner - 20zł</li>
+                                        <li>Avatar - 15zł</li>
+                                        <li>Miniaturka - 15zł</li>
+                                        <li>Plakat - 25zł</li>
+                                        <li>Okładka - 15zł</li>
+                                        <li>Panele - 5zł za jeden</li>
+                                    </ul>
+                                </div>
+
+                                <div class="detail-section" style="margin-top: 20px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-purple-light); letter-spacing: 0.05em;">
+                                        Co oferuję:</h4>
+                                    <ul class="custom-bracket-list purple-brackets">
+                                        <li>Przejrzystą i schludną pracę</li>
+                                        <li>Kreatywność</li>
+                                        <li>Dopasowany klimat</li>
+                                        <li>Ciekawy design</li>
+                                        <li>Krótki czas realizacji (do 48h)</li>
+                                        <li>Stały kontakt</li>
+                                        <li>Nielimitowane poprawki</li>
+                                    </ul>
+                                </div>
+
+                                <div class="detail-section" style="margin-top: 20px;">
+                                    <h4
+                                        style="margin-bottom: 12px; font-family: var(--font-tech); text-transform: uppercase; font-size: 13px; color: var(--color-purple-light); letter-spacing: 0.05em;">
+                                        Dodatkowe info:</h4>
+                                    <ul class="custom-bracket-list purple-brackets">
+                                        <li>Nielimitowane poprawki</li>
+                                        <li>Stały kontakt przez discorda/instagrama/tiktoka</li>
+                                        <li>Miło jakbyś miał/a swoją wizję na daną pracę</li>
+                                    </ul>
+                                </div>
+
+                                <p class="service-footer-note" style="margin-top: 20px;">
+                                    Jeśli chcesz zobaczyć prace które zrobiłem, wejdź w zakładkę portfolio i zobacz to co cię interesuje. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+                                </p>
+                            </div>
+                            <div class="service-action-bar" style="margin-top: auto; padding-top: 20px;">
+                                <a href="https://www.instagram.com/vert1ss/" target="_blank"
+                                    class="btn btn-primary btn-order btn-full purple-btn">Zamów grafikę</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 5: SOCIALE (From Mixly FAQ but curated) -->
+                <section id="tab-socials" class="tab-content">
+                    <div class="content-header">
+                        <h2>Moje Social Media</h2>
+                        <p class="subtitle">Sprawdź moją twórczość bezpośrednio na social mediach oraz w razie potrzeby
+                            pisz śmiało 😉.</p>
+                    </div>
+
+                    <div class="socials-container-box">
+                        <div class="card glass socials-col-card">
+                            <div class="socials-col-header">
+                                <img src="grafiki/vertis_avatar.png" alt="Vertis Avatar" class="socials-avatar-img">
+                                <div class="socials-meta">
+                                    <h3 class="monospace">Vertis</h3>
+                                    <span>Właściciel Projektu & Producent</span>
+                                </div>
+                            </div>
+                            <div class="socials-buttons-list">
+                                <a href="https://www.youtube.com/@The_vertis" target="_blank"
+                                    class="btn btn-social btn-yt">
+                                    <span class="icon">🎥</span> YouTube
+                                </a>
+                                <a href="https://www.instagram.com/vert1ss/" target="_blank"
+                                    class="btn btn-social btn-ig">
+                                    <span class="icon">📸</span> Instagram
+                                </a>
+                                <a href="https://www.tiktok.com/@the_vertiss" target="_blank"
+                                    class="btn btn-social btn-tt">
+                                    <span class="icon">🎵</span> TikTok
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 6: FAQ -->
+                <section id="tab-faq" class="tab-content">
+                    <div class="faq-main-view">
+                        <div class="content-header">
+                            <h2>Odpowiedzi na twoje pytania</h2>
+                            <p class="subtitle">Wszystko co musisz wiedzieć o aplikacji Vertone oraz o nas.</p>
+                        </div>
+
+                        <div class="faq-accordion-container">
+                            <!-- Q1 -->
+                            <div class="faq-card glass">
+                                <div class="faq-question">
+                                    <span class="faq-q-indicator">Q</span>
+                                    <h3>Czym jest Vertone?</h3>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>Vertone to strona internetowa założona przez osobę o nicku Vertis, która
+                                        pasjonuje się tworzeniem muzyki od ponad 3 lat. Strona to tak naprawdę sklep
+                                        połączony z portfolio. Nazwa Vertone wzięła się z połączenia nicku "Vertis" i
+                                        muzycznego "Tone".</p>
+                                </div>
+                            </div>
+
+                            <!-- Q2 -->
+                            <div class="faq-card glass">
+                                <div class="faq-question">
+                                    <span class="faq-q-indicator">Q</span>
+                                    <h3>Kiedy powstała ta strona?</h3>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>Oficjalne prace nad aplikacją zaczęły się dokładnie 11.07.2026 roku.</p>
+                                </div>
+                            </div>
+
+                            <!-- Q3 -->
+                            <div class="faq-card glass">
+                                <div class="faq-question">
+                                    <span class="faq-q-indicator">Q</span>
+                                    <h3>Co ma na celu?</h3>
+                                </div>
+                                <div class="faq-answer">
+                                    <p>Vertis tworząc tę stronę miał na celu wesprzeć i pomóc osobom, które dopiero
+                                        zaczynają z muzyką. Tak naprawdę pół za darmo, a pół za pieniądze. Gdy kupisz
+                                        mix to zrobię streama na youtube z tego jak mixuje, a ty możesz na nim nauczyć
+                                        się wielu nowych rzeczy, ponieważ tłumaczę wszystko co robię i dlaczego. Lub
+                                        możesz kupić kurs mixu i samemu nauczyć się podstaw, aby później podziałać w
+                                        praktyce z tym czego się nauczyłeś.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="faq-section-divider">
+                            <h4>Social Media Właściciela</h4>
+                            <p class="divider-sub">Sprawdź moje oficjalne profile i bądźmy w kontakcie.</p>
+                        </div>
+
+                        <div style="max-width: 400px; margin: 0 auto;">
+                            <div class="card glass socials-col-card">
+                                <div class="socials-col-header">
+                                    <img src="grafiki/vertis_avatar.png" alt="Vertis"
+                                        style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--color-blue-main); box-shadow: 0 0 8px var(--color-blue-glow);">
+                                    <h3>Vertis</h3>
+                                </div>
+                                <div class="socials-buttons-list">
+                                    <a href="https://www.youtube.com/@The_vertis" target="_blank"
+                                        class="btn btn-social btn-yt">
+                                        <span class="icon">🎥</span> YouTube
+                                    </a>
+                                    <a href="https://www.instagram.com/vert1ss/" target="_blank"
+                                        class="btn btn-social btn-ig">
+                                        <span class="icon">📸</span> Instagram
+                                    </a>
+                                    <a href="https://www.tiktok.com/@the_vertiss" target="_blank"
+                                        class="btn btn-social btn-tt">
+                                        <span class="icon">🎵</span> TikTok
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 7: PRIVACY & TERMS -->
+                <section id="tab-privacy" class="tab-content">
+                    <div class="content-header">
+                        <h2>Polityka prywatności i regulamin</h2>
+                        <p class="subtitle">Zasady korzystania z serwisu oraz ochrona praw autorskich.</p>
+                    </div>
+
+                    <div class="card glass highlight-blue"
+                        style="padding: 30px; line-height: 1.8; color: var(--color-text-muted); font-size: 14px; background: rgba(10, 12, 18, 0.4); border: 1px solid rgba(255,255,255,0.03);">
+                        <h3
+                            style="color: var(--color-text-primary); margin-top: 0; margin-bottom: 20px; font-size: 20px; font-family: var(--font-tech); text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; letter-spacing: 0.05em;">
+                            Prawa autorskie</h3>
+                        <p
+                            style="color: var(--color-blue-light); font-weight: 700; font-family: var(--font-mono); font-size: 13px; margin-bottom: 20px;">
+                            © [Vertone ze współpracą z zespołem ReTrap music / Oscar "Vertis" Legutko] [12.07.2026].
+                            Wszelkie prawa zastrzeżone.</p>
+                        <p style="margin-bottom: 16px;">Witryna internetowa oraz aplikacja internetowa, w tym ich kod
+                            źródłowy, projekt graficzny, interfejs użytkownika, funkcjonalności, treści, bazy danych i
+                            pozostałe elementy, stanowią przedmiot ochrony prawnej na podstawie przepisów o prawie
+                            autorskim.</p>
+                        <p style="margin-bottom: 0;">Kopiowanie, modyfikowanie, rozpowszechnianie, dekompilacja lub
+                            wykorzystywanie całości bądź części serwisu i aplikacji bez uprzedniej pisemnej zgody
+                            właściciela praw jest zabronione.</p>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+
+
+    <!-- MODAL 2: Add Track Modal -->
+    <div id="add-track-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-blue">
+            <button class="modal-close-btn" id="btn-close-track-modal">&times;</button>
+            <h3 class="modal-title monospace">🎵 Dodaj nowy utwór</h3>
+            <p class="modal-subtitle">Wgraj plik audio (MP3, WAV) i uzupełnij tytuł.</p>
+
+            <div class="modal-form-group">
+                <label for="track-title-input">Tytuł utworu / bitu:</label>
+                <input type="text" id="track-title-input" class="input-dark"
+                    placeholder="np. Vertis - Cyber Beats (Mix/Master)">
+            </div>
+
+            <div class="modal-form-group">
+                <label>Wgraj plik audio:</label>
+                <div class="file-upload-zone" id="track-file-dropzone">
+                    <span class="upload-icon">📁</span>
+                    <span class="upload-text">Przeciągnij i upuść plik lub kliknij</span>
+                    <span class="upload-sub">Obsługiwane: MP3, WAV (Maks. 30MB)</span>
+                    <input type="file" id="track-file-input" accept="audio/mp3, audio/wav, audio/x-wav"
+                        style="display: none;">
+                </div>
+                <div id="track-file-status" class="file-status hidden">Wybrano plik: <span id="track-file-name"
+                        class="monospace"></span></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-cancel-track">Anuluj</button>
+                <button class="btn btn-primary" id="btn-submit-track">Dodaj utwór</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Add Graphic Modal -->
+    <div id="add-graphic-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-purple">
+            <button class="modal-close-btn" id="btn-close-graphic-modal">&times;</button>
+            <h3 class="modal-title monospace" style="color: var(--color-purple-light);">🎨 Dodaj nową grafikę</h3>
+            <p class="modal-subtitle">Wgraj grafikę (PNG, JPG, JPEG) do aktywnej kategorii.</p>
+
+            <div class="modal-form-group">
+                <label for="graphic-title-input">Tytuł / Nazwa pracy:</label>
+                <input type="text" id="graphic-title-input" class="input-dark"
+                    placeholder="np. Banner dla Twitch - Vertis v2">
+            </div>
+
+            <div class="modal-form-group">
+                <label for="graphic-category-select">Kategoria grafiki:</label>
+                <select id="graphic-category-select" class="select-dark" style="width: 100%; padding: 10px 14px; border-radius: 8px;">
+                    <option value="bannery">Bannery</option>
+                    <option value="avatory">Avatary</option>
+                    <option value="plakaty">Plakaty</option>
+                    <option value="panele">Panele</option>
+                    <option value="okladki">Okładki</option>
+                </select>
+            </div>
+
+            <div class="modal-form-group">
+                <label>Wgraj plik graficzny:</label>
+                <div class="file-upload-zone purple-upload" id="graphic-file-dropzone">
+                    <span class="upload-icon">🖼️</span>
+                    <span class="upload-text">Przeciągnij i upuść plik lub kliknij</span>
+                    <span class="upload-sub">Obsługiwane: PNG, JPG, JPEG, GIF (Maks. 10MB)</span>
+                    <input type="file" id="graphic-file-input" accept="image/*" style="display: none;">
+                </div>
+                <div id="graphic-file-status" class="file-status hidden">Wybrano plik: <span id="graphic-file-name"
+                        class="monospace"></span></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-cancel-graphic">Anuluj</button>
+                <button class="btn btn-primary" id="btn-submit-graphic"
+                    style="background: linear-gradient(135deg, var(--color-purple-dim) 0%, var(--color-purple-main) 100%);">Dodaj
+                    grafikę</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Write Review Modal -->
+    <div id="write-review-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-blue">
+            <button class="modal-close-btn" id="btn-close-review-modal">&times;</button>
+            <h3 class="modal-title monospace">✍️ Wystaw opinię</h3>
+            <p class="modal-subtitle">Napisz kilka słów o naszej współpracy i oceń jej jakość.</p>
+
+            <div class="modal-form-group">
+                <label for="review-author-input">Twoje Imię / Nickname:</label>
+                <input type="text" id="review-author-input" class="input-dark" placeholder="np. Michał, DJ Shadow">
+            </div>
+
+            <div class="modal-form-group">
+                <label>Ocena (gwiazdki):</label>
+                <div class="rating-stars-selector" id="rating-selector">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+            </div>
+
+            <div class="modal-form-group">
+                <label for="review-content-input">Treść opinii:</label>
+                <textarea id="review-content-input" class="input-dark"
+                    placeholder="Jak oceniasz jakość usług, kontakt, czas realizacji..."
+                    style="height: 100px; resize: none;"></textarea>
+            </div>
+
+            <!-- Before/After audio comparison upload (Optional) -->
+            <div class="modal-form-group"
+                style="border-top: 1px dashed rgba(255,255,255,0.06); padding-top: 15px; margin-top: 15px;">
+                <label
+                    style="color: var(--color-blue-light); font-weight: 600; display: block; margin-bottom: 8px;">Porównanie
+                    audio Przed / Po miksie (opcjonalnie):</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="font-size: 11px; margin-bottom: 4px; display: block;">Audio przed miksem:</label>
+                        <div class="file-upload-zone" id="review-before-dropzone"
+                            style="padding: 15px 10px; border-radius: 6px;">
+                            <span class="upload-icon" style="font-size: 16px;">📁</span>
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
+                                kliknij</span>
+                            <input type="file" id="review-before-input" accept="audio/mp3, audio/wav, audio/x-wav"
+                                style="display: none;">
+                        </div>
+                        <div id="review-before-status" class="file-status hidden"
+                            style="font-size:10px; padding: 4px 8px; margin-top: 5px;">Wybrano plik: <span
+                                id="review-before-name" class="monospace"></span></div>
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; margin-bottom: 4px; display: block;">Audio po miksie:</label>
+                        <div class="file-upload-zone" id="review-after-dropzone"
+                            style="padding: 15px 10px; border-radius: 6px;">
+                            <span class="upload-icon" style="font-size: 16px;">📁</span>
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
+                                kliknij</span>
+                            <input type="file" id="review-after-input" accept="audio/mp3, audio/wav, audio/x-wav"
+                                style="display: none;">
+                        </div>
+                        <div id="review-after-status" class="file-status hidden"
+                            style="font-size:10px; padding: 4px 8px; margin-top: 5px;">Wybrano plik: <span
+                                id="review-after-name" class="monospace"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-form-group">
+                <label>Wybierz avatar profilu:</label>
+                <div class="avatar-presets-grid" id="avatar-presets-selector">
+                    <div class="avatar-preset-item active" data-avatar="user1">👨‍💻</div>
+                    <div class="avatar-preset-item" data-avatar="user2">👩‍🎤</div>
+                    <div class="avatar-preset-item" data-avatar="user3">🎧</div>
+                    <div class="avatar-preset-item" data-avatar="user4">⚡</div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-cancel-review">Anuluj</button>
+                <button class="btn btn-primary" id="btn-submit-review">Prześlij opinię</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX: Full screen image viewer -->
+    <div id="lightbox" class="lightbox-overlay">
+        <span class="lightbox-close-btn" id="btn-close-lightbox">&times;</span>
+        <img class="lightbox-img" id="lightbox-image" src="" alt="Full Screen Work">
+        <div class="lightbox-title" id="lightbox-title-text">Tytuł Grafiki</div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="settings-modal-overlay">
+        <div class="settings-modal-box glass highlight-blue">
+            <button class="settings-close-btn" id="btn-close-settings" title="Zamknij">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <div class="settings-modal-sidebar">
+                <button class="settings-tab-btn active" data-settings-tab="general">
+                    <span>⚙️</span>
+                    <span data-i18n="settings_general">Ogólne</span>
+                </button>
+                <button class="settings-tab-btn" data-settings-tab="audio" style="opacity: 0.5; pointer-events: none; display: none;">
+                    <span>🔊</span>
+                    <span data-i18n="settings_audio">Audio (Wkrótce)</span>
+                </button>
+            </div>
+            <div class="settings-modal-content">
+                <!-- Tab: General -->
+                <div class="settings-tab-content active" id="settings-pane-general">
+                    <h3 data-i18n="settings_title" style="margin-top: 0; margin-bottom: 20px; font-family: var(--font-tech); color: var(--color-blue-light); letter-spacing: 0.05em; text-transform: uppercase; font-size: 16px;">Ustawienia ogólne</h3>
+                    
+                    <div class="setting-item" style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
+                        <span data-i18n="settings_select_lang" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz język strony</span>
+                        <select id="settings-lang-select" class="select-dark" style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
+                            <option value="pl">Polski</option>
+                            <option value="en">English (Angielski)</option>
+                            <option value="fr">Français (Francuski)</option>
+                            <option value="ru">Русский (Rosyjski)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="setting-item" style="display: flex; flex-direction: column; gap: 8px;">
+                        <span data-i18n="settings_theme" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz motyw strony</span>
+                        <select id="settings-theme-select" class="select-dark" style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
+                            <option value="dark" data-i18n="settings_theme_dark">Ciemny</option>
+                            <option value="light" data-i18n="settings_theme_light">Jasny</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="discord-login-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-blue" style="max-width: 400px; padding: 30px;">
+            <button class="modal-close-btn" id="btn-close-discord-login" title="Zamknij" style="background:none; border:none; cursor:pointer; color:var(--color-text-dim); position:absolute; top:18px; right:18px; font-size:20px;">
+                &times;
+            </button>
+            <h3 style="margin-top: 0; margin-bottom: 8px; font-family: var(--font-tech); color: var(--color-blue-light); text-transform: uppercase; font-size: 16px; letter-spacing:0.05em;">Logowanie Administratora</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">Wprowadź dane dostępowe administratora Vertone.</p>
+
+            <form id="admin-login-form" onsubmit="return false;">
+                <div class="modal-form-group" style="margin-bottom: 16px;">
+                    <label for="admin-username-input" style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Nazwa użytkownika:</label>
+                    <input type="text" id="admin-username-input" class="input-dark" placeholder="np. The_vertis" style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="username">
+                </div>
+
+                <div class="modal-form-group" style="margin-bottom: 18px;">
+                    <label for="admin-password-input" style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Hasło:</label>
+                    <input type="password" id="admin-password-input" class="input-dark" placeholder="Wprowadź hasło..." style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="current-password">
+                </div>
+
+                <div id="admin-login-error" class="hidden" style="color: var(--color-danger); font-size: 12px; margin-bottom: 15px; background: rgba(244, 63, 94, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.2); text-align: center;">
+                    Nieprawidłowa nazwa użytkownika lub hasło!
+                </div>
+
+                <div class="modal-actions" style="border-top: none; padding-top: 0; margin-top: 0;">
+                    <button type="submit" class="btn btn-primary btn-full btn-techno" id="btn-submit-admin-login" style="padding: 12px 20px;">
+                        <span>Zaloguj się</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-blue" style="max-width: 400px; text-align: center;">
+            <h3 class="modal-title monospace" id="confirm-modal-title" style="margin-bottom: 12px;" data-i18n="confirm_title">Potwierdzenie</h3>
+            <p class="modal-subtitle" id="confirm-modal-message" style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Czy na pewno chcesz wykonać tę akcję?</p>
+            <div class="modal-actions" style="justify-content: center; gap: 15px; border-top: none; padding-top: 0; margin-top: 0;">
+                <button class="btn btn-secondary" id="btn-confirm-cancel" style="padding: 8px 20px;" data-i18n="btn_cancel">Anuluj</button>
+                <button class="btn btn-primary" id="btn-confirm-accept" style="padding: 8px 24px; background: linear-gradient(135deg, var(--color-danger) 0%, #be123c 100%); border-color: rgba(244, 63, 94, 0.35); box-shadow: 0 0 10px rgba(244, 63, 94, 0.15);" data-i18n="btn_yes">Tak</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal -->
+    <div id="alert-modal" class="modal-overlay">
+        <div class="modal-box glass highlight-blue" style="max-width: 400px; text-align: center;">
+            <h3 class="modal-title monospace" id="alert-modal-title" style="margin-bottom: 12px;" data-i18n="alert_title">Powiadomienie</h3>
+            <p class="modal-subtitle" id="alert-modal-message" style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Komunikat</p>
+            <div class="modal-actions" style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0;">
+                <button class="btn btn-primary" id="btn-alert-close" style="padding: 8px 30px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
