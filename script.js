@@ -1853,7 +1853,7 @@ function setupDiscordLogin() {
     const menuProfile = document.getElementById('user-profile-menu');
     const dropdown = document.getElementById('user-profile-dropdown');
     const btnLogout = document.getElementById('btn-discord-logout');
-    
+
     const adminForm = document.getElementById('admin-login-form');
     const userInput = document.getElementById('admin-username-input');
     const passInput = document.getElementById('admin-password-input');
@@ -1965,447 +1965,447 @@ function setupDiscordLogin() {
     }
 }
 
-    function handleDiscordHashLogin() {
-        // Legacy OAuth hash redirect handler disabled
-    }
+function handleDiscordHashLogin() {
+    // Legacy OAuth hash redirect handler disabled
+}
 
-    // --- MODALS ENGINE ---
-    function showModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.classList.add('show');
+// --- MODALS ENGINE ---
+function showModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.classList.remove('show');
+        // Clear errors if login modal
+        if (id === 'login-modal') {
+            document.getElementById('login-error-msg').classList.add('hidden');
+            document.getElementById('admin-password').value = '';
         }
     }
+}
 
-    function closeModal(id) {
-        const modal = document.getElementById(id);
-        if (modal) {
-            modal.classList.remove('show');
-            // Clear errors if login modal
-            if (id === 'login-modal') {
-                document.getElementById('login-error-msg').classList.add('hidden');
-                document.getElementById('admin-password').value = '';
-            }
-        }
-    }
+function showCustomConfirm(message, onAccept, title = null) {
+    const modal = document.getElementById('confirm-modal');
+    if (!modal) return;
 
-    function showCustomConfirm(message, onAccept, title = null) {
-        const modal = document.getElementById('confirm-modal');
-        if (!modal) return;
+    const msgEl = document.getElementById('confirm-modal-message');
+    const titleEl = document.getElementById('confirm-modal-title');
+    const acceptBtn = document.getElementById('btn-confirm-accept');
+    const cancelBtn = document.getElementById('btn-confirm-cancel');
 
-        const msgEl = document.getElementById('confirm-modal-message');
-        const titleEl = document.getElementById('confirm-modal-title');
-        const acceptBtn = document.getElementById('btn-confirm-accept');
-        const cancelBtn = document.getElementById('btn-confirm-cancel');
+    titleEl.textContent = title || (typeof t === 'function' ? t('confirm_title') : "Potwierdzenie");
+    msgEl.textContent = message;
 
-        titleEl.textContent = title || (typeof t === 'function' ? t('confirm_title') : "Potwierdzenie");
-        msgEl.textContent = message;
+    modal.classList.add('show');
 
-        modal.classList.add('show');
+    // Clear old event listeners by cloning
+    const newAccept = acceptBtn.cloneNode(true);
+    acceptBtn.parentNode.replaceChild(newAccept, acceptBtn);
 
-        // Clear old event listeners by cloning
-        const newAccept = acceptBtn.cloneNode(true);
-        acceptBtn.parentNode.replaceChild(newAccept, acceptBtn);
+    const newCancel = cancelBtn.cloneNode(true);
+    cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
 
-        const newCancel = cancelBtn.cloneNode(true);
-        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+    newAccept.addEventListener('click', () => {
+        modal.classList.remove('show');
+        if (onAccept) onAccept();
+    });
 
-        newAccept.addEventListener('click', () => {
-            modal.classList.remove('show');
-            if (onAccept) onAccept();
+    newCancel.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+}
+
+function showCustomAlert(message, title = null) {
+    const modal = document.getElementById('alert-modal');
+    if (!modal) return;
+
+    const msgEl = document.getElementById('alert-modal-message');
+    const titleEl = document.getElementById('alert-modal-title');
+    const closeBtn = document.getElementById('btn-alert-close');
+
+    titleEl.textContent = title || (typeof t === 'function' ? t('alert_title') : "Powiadomienie");
+    msgEl.textContent = message;
+
+    modal.classList.add('show');
+
+    const newClose = closeBtn.cloneNode(true);
+    closeBtn.parentNode.replaceChild(newClose, closeBtn);
+
+    newClose.addEventListener('click', () => {
+        modal.classList.remove('show');
+    });
+}
+
+function setupModalEvents() {
+    // Close triggers
+    document.querySelectorAll('.modal-close-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modal = btn.closest('.modal-overlay');
+            closeModal(modal.id);
         });
+    });
 
-        newCancel.addEventListener('click', () => {
-            modal.classList.remove('show');
-        });
-    }
-
-    function showCustomAlert(message, title = null) {
-        const modal = document.getElementById('alert-modal');
-        if (!modal) return;
-
-        const msgEl = document.getElementById('alert-modal-message');
-        const titleEl = document.getElementById('alert-modal-title');
-        const closeBtn = document.getElementById('btn-alert-close');
-
-        titleEl.textContent = title || (typeof t === 'function' ? t('alert_title') : "Powiadomienie");
-        msgEl.textContent = message;
-
-        modal.classList.add('show');
-
-        const newClose = closeBtn.cloneNode(true);
-        closeBtn.parentNode.replaceChild(newClose, closeBtn);
-
-        newClose.addEventListener('click', () => {
-            modal.classList.remove('show');
-        });
-    }
-
-    function setupModalEvents() {
-        // Close triggers
-        document.querySelectorAll('.modal-close-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const modal = btn.closest('.modal-overlay');
+    document.querySelectorAll('.modal-overlay').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
                 closeModal(modal.id);
-            });
+            }
         });
+    });
 
-        document.querySelectorAll('.modal-overlay').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
+    // Add cancel buttons triggers
+    const cancelTrack = document.getElementById('btn-cancel-track');
+    if (cancelTrack) cancelTrack.addEventListener('click', () => closeModal('add-track-modal'));
+
+    const cancelGraphic = document.getElementById('btn-cancel-graphic');
+    if (cancelGraphic) cancelGraphic.addEventListener('click', () => closeModal('add-graphic-modal'));
+
+    const cancelReview = document.getElementById('btn-cancel-review');
+    if (cancelReview) cancelReview.addEventListener('click', () => closeModal('write-review-modal'));
+
+    // Modal triggers opening
+    const addTrackBtn = document.getElementById('btn-add-track-modal');
+    if (addTrackBtn) {
+        addTrackBtn.addEventListener('click', () => {
+            const titleInput = document.getElementById('track-title-input');
+            const fileInput = document.getElementById('track-file-input');
+            const fileStatus = document.getElementById('track-file-status');
+            if (titleInput) titleInput.value = '';
+            if (fileInput) fileInput.value = '';
+            if (fileStatus) fileStatus.classList.add('hidden');
+            showModal('add-track-modal');
         });
-
-        // Add cancel buttons triggers
-        const cancelTrack = document.getElementById('btn-cancel-track');
-        if (cancelTrack) cancelTrack.addEventListener('click', () => closeModal('add-track-modal'));
-
-        const cancelGraphic = document.getElementById('btn-cancel-graphic');
-        if (cancelGraphic) cancelGraphic.addEventListener('click', () => closeModal('add-graphic-modal'));
-
-        const cancelReview = document.getElementById('btn-cancel-review');
-        if (cancelReview) cancelReview.addEventListener('click', () => closeModal('write-review-modal'));
-
-        // Modal triggers opening
-        const addTrackBtn = document.getElementById('btn-add-track-modal');
-        if (addTrackBtn) {
-            addTrackBtn.addEventListener('click', () => {
-                const titleInput = document.getElementById('track-title-input');
-                const fileInput = document.getElementById('track-file-input');
-                const fileStatus = document.getElementById('track-file-status');
-                if (titleInput) titleInput.value = '';
-                if (fileInput) fileInput.value = '';
-                if (fileStatus) fileStatus.classList.add('hidden');
-                showModal('add-track-modal');
-            });
-        }
-
-        document.querySelectorAll('.btn-add-graphic-modal, #btn-add-graphic-modal').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const titleInput = document.getElementById('graphic-title-input');
-                const fileInput = document.getElementById('graphic-file-input');
-                const fileStatus = document.getElementById('graphic-file-status');
-                const catSelect = document.getElementById('graphic-category-select');
-                if (titleInput) titleInput.value = '';
-                if (fileInput) fileInput.value = '';
-                if (fileStatus) fileStatus.classList.add('hidden');
-                if (catSelect) catSelect.value = appState.activeCategory || 'bannery';
-                showModal('add-graphic-modal');
-            });
-        });
-
-        const writeReviewBtn = document.getElementById('btn-write-review-modal');
-        if (writeReviewBtn) {
-            writeReviewBtn.addEventListener('click', () => {
-                const authorInput = document.getElementById('review-author-input');
-                const contentInput = document.getElementById('review-content-input');
-                const beforeInput = document.getElementById('review-before-input');
-                const afterInput = document.getElementById('review-after-input');
-                const beforeStatus = document.getElementById('review-before-status');
-                const afterStatus = document.getElementById('review-after-status');
-                if (authorInput) authorInput.value = '';
-                if (contentInput) contentInput.value = '';
-                if (beforeInput) beforeInput.value = '';
-                if (afterInput) afterInput.value = '';
-                if (beforeStatus) beforeStatus.classList.add('hidden');
-                if (afterStatus) afterStatus.classList.add('hidden');
-                appReviewRating = 5;
-                syncStars(5);
-                showModal('write-review-modal');
-            });
-        }
-
-        // File Drag & Drop events
-        setupFileDropzone('track-file-dropzone', 'track-file-input', 'track-file-status', 'track-file-name');
-        setupFileDropzone('graphic-file-dropzone', 'graphic-file-input', 'graphic-file-status', 'graphic-file-name');
-        setupFileDropzone('review-before-dropzone', 'review-before-input', 'review-before-status', 'review-before-name');
-        setupFileDropzone('review-after-dropzone', 'review-after-input', 'review-after-status', 'review-after-name');
-
-        // Add track submit
-        const submitTrack = document.getElementById('btn-submit-track');
-        if (submitTrack) submitTrack.addEventListener('click', submitNewTrack);
-
-        // Add graphic submit
-        const submitGraphic = document.getElementById('btn-submit-graphic');
-        if (submitGraphic) submitGraphic.addEventListener('click', submitNewGraphic);
-
-        // Stars review setup
-        setupStarsRating();
-        const submitReview = document.getElementById('btn-submit-review');
-        if (submitReview) submitReview.addEventListener('click', submitNewReview);
     }
 
-    // File dropzone utilities
-    function setupFileDropzone(zoneId, inputId, statusId, nameId) {
-        const zone = document.getElementById(zoneId);
-        const input = document.getElementById(inputId);
-        const status = document.getElementById(statusId);
-        if (!zone || !input) return;
+    document.querySelectorAll('.btn-add-graphic-modal, #btn-add-graphic-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const titleInput = document.getElementById('graphic-title-input');
+            const fileInput = document.getElementById('graphic-file-input');
+            const fileStatus = document.getElementById('graphic-file-status');
+            const catSelect = document.getElementById('graphic-category-select');
+            if (titleInput) titleInput.value = '';
+            if (fileInput) fileInput.value = '';
+            if (fileStatus) fileStatus.classList.add('hidden');
+            if (catSelect) catSelect.value = appState.activeCategory || 'bannery';
+            showModal('add-graphic-modal');
+        });
+    });
 
-        function updateDropzoneUI(file) {
-            if (!file) return;
-            const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
-            const icon = isAudio ? '🎵' : '🖼️';
-            const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-            zone.innerHTML = `
+    const writeReviewBtn = document.getElementById('btn-write-review-modal');
+    if (writeReviewBtn) {
+        writeReviewBtn.addEventListener('click', () => {
+            const authorInput = document.getElementById('review-author-input');
+            const contentInput = document.getElementById('review-content-input');
+            const beforeInput = document.getElementById('review-before-input');
+            const afterInput = document.getElementById('review-after-input');
+            const beforeStatus = document.getElementById('review-before-status');
+            const afterStatus = document.getElementById('review-after-status');
+            if (authorInput) authorInput.value = '';
+            if (contentInput) contentInput.value = '';
+            if (beforeInput) beforeInput.value = '';
+            if (afterInput) afterInput.value = '';
+            if (beforeStatus) beforeStatus.classList.add('hidden');
+            if (afterStatus) afterStatus.classList.add('hidden');
+            appReviewRating = 5;
+            syncStars(5);
+            showModal('write-review-modal');
+        });
+    }
+
+    // File Drag & Drop events
+    setupFileDropzone('track-file-dropzone', 'track-file-input', 'track-file-status', 'track-file-name');
+    setupFileDropzone('graphic-file-dropzone', 'graphic-file-input', 'graphic-file-status', 'graphic-file-name');
+    setupFileDropzone('review-before-dropzone', 'review-before-input', 'review-before-status', 'review-before-name');
+    setupFileDropzone('review-after-dropzone', 'review-after-input', 'review-after-status', 'review-after-name');
+
+    // Add track submit
+    const submitTrack = document.getElementById('btn-submit-track');
+    if (submitTrack) submitTrack.addEventListener('click', submitNewTrack);
+
+    // Add graphic submit
+    const submitGraphic = document.getElementById('btn-submit-graphic');
+    if (submitGraphic) submitGraphic.addEventListener('click', submitNewGraphic);
+
+    // Stars review setup
+    setupStarsRating();
+    const submitReview = document.getElementById('btn-submit-review');
+    if (submitReview) submitReview.addEventListener('click', submitNewReview);
+}
+
+// File dropzone utilities
+function setupFileDropzone(zoneId, inputId, statusId, nameId) {
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
+    const status = document.getElementById(statusId);
+    if (!zone || !input) return;
+
+    function updateDropzoneUI(file) {
+        if (!file) return;
+        const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
+        const icon = isAudio ? '🎵' : '🖼️';
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+        zone.innerHTML = `
             <span class="upload-icon">${icon}</span>
             <span class="upload-text" style="color: var(--color-blue-light); font-weight: 700; word-break: break-all; max-width: 90%; font-size: 13px;">${file.name}</span>
             <span class="upload-sub" style="color: var(--color-success); font-weight: 600;">Wybrano plik (${sizeMB} MB) • Kliknij, aby zmienić</span>
         `;
-            if (status) status.classList.add('hidden');
+        if (status) status.classList.add('hidden');
+    }
+
+    zone.addEventListener('click', () => input.click());
+
+    zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('dragover');
+    });
+
+    zone.addEventListener('dragleave', () => {
+        zone.classList.remove('dragover');
+    });
+
+    zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length > 0) {
+            input.files = e.dataTransfer.files;
+            updateDropzoneUI(input.files[0]);
         }
+    });
 
-        zone.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+        if (input.files.length > 0) {
+            updateDropzoneUI(input.files[0]);
+        }
+    });
+}
 
-        zone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            zone.classList.add('dragover');
-        });
-
-        zone.addEventListener('dragleave', () => {
-            zone.classList.remove('dragover');
-        });
-
-        zone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            zone.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                input.files = e.dataTransfer.files;
-                updateDropzoneUI(input.files[0]);
-            }
-        });
-
-        input.addEventListener('change', () => {
-            if (input.files.length > 0) {
-                updateDropzoneUI(input.files[0]);
-            }
-        });
-    }
-
-    function readFileAsArrayBuffer(file) {
-        return new Promise((resolve, reject) => {
-            if (!file) {
-                resolve(null);
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.onerror = (e) => reject(e);
-            reader.readAsArrayBuffer(file);
-        });
-    }
-
-    async function submitNewTrack() {
-        const titleInput = document.getElementById('track-title-input');
-        const fileInput = document.getElementById('track-file-input');
-
-        const title = titleInput.value.trim();
-        if (!title) {
-            showCustomAlert(t('review_fields_required') || "Podaj tytuł utworu!");
+function readFileAsArrayBuffer(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            resolve(null);
             return;
         }
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(e);
+        reader.readAsArrayBuffer(file);
+    });
+}
 
-        if (fileInput.files.length === 0) {
-            showCustomAlert(t('review_fields_required') || "Wybierz plik audio z dysku!");
-            return;
-        }
+async function submitNewTrack() {
+    const titleInput = document.getElementById('track-title-input');
+    const fileInput = document.getElementById('track-file-input');
 
-        const file = fileInput.files[0];
-
-        try {
-            const arrayBuffer = await readFileAsArrayBuffer(file);
-
-            // Save to IndexedDB
-            const newTrack = {
-                id: 'track_' + Date.now(),
-                title: title,
-                votesUp: 0,
-                votesDown: 0,
-                audioData: arrayBuffer,
-                fileType: file.type,
-                feedbacks: []
-            };
-
-            await saveToDB('tracks', newTrack);
-            closeModal('add-track-modal');
-            await loadTracks();
-            renderTracks();
-        } catch (e) {
-            console.error("Failed to save track in IndexedDB:", e);
-            showCustomAlert("Błąd podczas zapisywania pliku!");
-        }
+    const title = titleInput.value.trim();
+    if (!title) {
+        showCustomAlert(t('review_fields_required') || "Podaj tytuł utworu!");
+        return;
     }
 
-    async function submitNewGraphic() {
-        const titleInput = document.getElementById('graphic-title-input');
-        const fileInput = document.getElementById('graphic-file-input');
-        const catSelect = document.getElementById('graphic-category-select');
+    if (fileInput.files.length === 0) {
+        showCustomAlert(t('review_fields_required') || "Wybierz plik audio z dysku!");
+        return;
+    }
 
-        const title = titleInput.value.trim();
-        if (!title) {
-            showCustomAlert(t('review_fields_required') || "Podaj tytuł pracy!");
-            return;
+    const file = fileInput.files[0];
+
+    try {
+        const arrayBuffer = await readFileAsArrayBuffer(file);
+
+        // Save to IndexedDB
+        const newTrack = {
+            id: 'track_' + Date.now(),
+            title: title,
+            votesUp: 0,
+            votesDown: 0,
+            audioData: arrayBuffer,
+            fileType: file.type,
+            feedbacks: []
+        };
+
+        await saveToDB('tracks', newTrack);
+        closeModal('add-track-modal');
+        await loadTracks();
+        renderTracks();
+    } catch (e) {
+        console.error("Failed to save track in IndexedDB:", e);
+        showCustomAlert("Błąd podczas zapisywania pliku!");
+    }
+}
+
+async function submitNewGraphic() {
+    const titleInput = document.getElementById('graphic-title-input');
+    const fileInput = document.getElementById('graphic-file-input');
+    const catSelect = document.getElementById('graphic-category-select');
+
+    const title = titleInput.value.trim();
+    if (!title) {
+        showCustomAlert(t('review_fields_required') || "Podaj tytuł pracy!");
+        return;
+    }
+
+    if (fileInput.files.length === 0) {
+        showCustomAlert("Wybierz plik graficzny z dysku!");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const category = catSelect ? catSelect.value : appState.activeCategory;
+
+    try {
+        const arrayBuffer = await readFileAsArrayBuffer(file);
+
+        const newGraphic = {
+            id: 'graphic_' + Date.now(),
+            category: category,
+            title: title,
+            votesUp: 0,
+            votesDown: 0,
+            imageData: arrayBuffer,
+            fileType: file.type,
+            feedbacks: []
+        };
+
+        await saveToDB('graphics', newGraphic);
+        closeModal('add-graphic-modal');
+        appState.activeCategory = category;
+
+        // Update Title if currently in list view
+        const labels = {
+            bannery: 'Bannery',
+            avatory: 'Avatary',
+            plakaty: 'Plakaty',
+            panele: 'Panele',
+            okladki: 'Okładki'
+        };
+        const titleEl = document.getElementById('graphics-list-category-title');
+        if (titleEl) {
+            titleEl.textContent = `Portfolio // Grafiki // ${labels[category] || category}`;
         }
 
-        if (fileInput.files.length === 0) {
-            showCustomAlert("Wybierz plik graficzny z dysku!");
-            return;
-        }
-
-        const file = fileInput.files[0];
-        const category = catSelect ? catSelect.value : appState.activeCategory;
-
-        try {
-            const arrayBuffer = await readFileAsArrayBuffer(file);
-
-            const newGraphic = {
-                id: 'graphic_' + Date.now(),
-                category: category,
-                title: title,
-                votesUp: 0,
-                votesDown: 0,
-                imageData: arrayBuffer,
-                fileType: file.type,
-                feedbacks: []
-            };
-
-            await saveToDB('graphics', newGraphic);
-            closeModal('add-graphic-modal');
-            appState.activeCategory = category;
-
-            // Update Title if currently in list view
-            const labels = {
-                bannery: 'Bannery',
-                avatory: 'Avatary',
-                plakaty: 'Plakaty',
-                panele: 'Panele',
-                okladki: 'Okładki'
-            };
-            const titleEl = document.getElementById('graphics-list-category-title');
-            if (titleEl) {
-                titleEl.textContent = `Portfolio // Grafiki // ${labels[category] || category}`;
-            }
-
-            await loadGraphics();
-            renderGraphics();
-            showPortfolioView('graphics-list');
-        } catch (e) {
-            console.error("Failed to save graphic in DB:", e);
-            showCustomAlert("Błąd zapisu grafiki w bazie danych!");
-        }
+        await loadGraphics();
+        renderGraphics();
+        showPortfolioView('graphics-list');
+    } catch (e) {
+        console.error("Failed to save graphic in DB:", e);
+        showCustomAlert("Błąd zapisu grafiki w bazie danych!");
     }
+}
 
-    // Stars Rating Selector
-    let appReviewRating = 5;
-    function setupStarsRating() {
-        const stars = document.querySelectorAll('#rating-selector .star');
-        stars.forEach(star => {
-            star.addEventListener('click', () => {
-                const rating = parseInt(star.getAttribute('data-rating'));
-                appReviewRating = rating;
-                syncStars(rating);
-            });
-        });
-    }
-
-    function syncStars(rating) {
-        const stars = document.querySelectorAll('#rating-selector .star');
-        stars.forEach(star => {
-            const itemRating = parseInt(star.getAttribute('data-rating'));
-            if (itemRating <= rating) {
-                star.classList.add('active');
-            } else {
-                star.classList.remove('active');
-            }
-        });
-    }
-
-    async function submitNewReview() {
-        const author = document.getElementById('review-author-input').value.trim();
-        const text = document.getElementById('review-content-input').value.trim();
-
-        if (!author) {
-            showCustomAlert(t('review_author_required') || "Wpisz swoje imię!");
-            return;
-        }
-        if (!text) {
-            showCustomAlert(t('review_text_required') || "Wpisz treść opinii!");
-            return;
-        }
-
-        // Find active avatar preset
-        const activeAvatarItem = document.querySelector('.avatar-presets-grid .avatar-preset-item.active');
-        const avatar = activeAvatarItem ? activeAvatarItem.getAttribute('data-avatar') : 'user1';
-
-        const beforeInput = document.getElementById('review-before-input');
-        const afterInput = document.getElementById('review-after-input');
-
-        const beforeFile = beforeInput.files.length > 0 ? beforeInput.files[0] : null;
-        const afterFile = afterInput.files.length > 0 ? afterInput.files[0] : null;
-
-        try {
-            const beforeData = await readFileAsArrayBuffer(beforeFile);
-            const afterData = await readFileAsArrayBuffer(afterFile);
-
-            const newReview = {
-                id: 'rev_' + Date.now(),
-                author: author,
-                rating: appReviewRating,
-                text: text,
-                votesUp: 0,
-                votesDown: 0,
-                avatar: avatar,
-                beforeAudioData: beforeData,
-                beforeFileType: beforeFile ? beforeFile.type : null,
-                afterAudioData: afterData,
-                afterFileType: afterFile ? afterFile.type : null
-            };
-
-            await saveToDB('reviews', newReview);
-            closeModal('write-review-modal');
-            await loadReviews();
-            renderReviews();
-        } catch (e) {
-            console.error("Failed to save review:", e);
-            showCustomAlert("Błąd podczas zapisywania opinii!");
-        }
-    }
-
-
-    // --- LIGHTBOX GALLERY SYSTEM ---
-    function setupLightbox() {
-        const lightbox = document.getElementById('lightbox');
-        const closeBtn = document.getElementById('btn-close-lightbox');
-
-        closeBtn.addEventListener('click', () => closeLightbox());
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
-        });
-    }
-
-    function openLightbox(url, title) {
-        const lightbox = document.getElementById('lightbox');
-        const image = document.getElementById('lightbox-image');
-        const caption = document.getElementById('lightbox-title-text');
-
-        image.src = url;
-        caption.textContent = title;
-        lightbox.classList.add('show');
-    }
-
-    function closeLightbox() {
-        const lightbox = document.getElementById('lightbox');
-        lightbox.classList.remove('show');
-    }
-
-    // Preset avatars click listeners logic for write-review modal
-    document.querySelectorAll('.avatar-preset-item').forEach(item => {
-        item.addEventListener('click', () => {
-            document.querySelectorAll('.avatar-preset-item').forEach(a => a.classList.remove('active'));
-            item.classList.add('active');
+// Stars Rating Selector
+let appReviewRating = 5;
+function setupStarsRating() {
+    const stars = document.querySelectorAll('#rating-selector .star');
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const rating = parseInt(star.getAttribute('data-rating'));
+            appReviewRating = rating;
+            syncStars(rating);
         });
     });
+}
+
+function syncStars(rating) {
+    const stars = document.querySelectorAll('#rating-selector .star');
+    stars.forEach(star => {
+        const itemRating = parseInt(star.getAttribute('data-rating'));
+        if (itemRating <= rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+}
+
+async function submitNewReview() {
+    const author = document.getElementById('review-author-input').value.trim();
+    const text = document.getElementById('review-content-input').value.trim();
+
+    if (!author) {
+        showCustomAlert(t('review_author_required') || "Wpisz swoje imię!");
+        return;
+    }
+    if (!text) {
+        showCustomAlert(t('review_text_required') || "Wpisz treść opinii!");
+        return;
+    }
+
+    // Find active avatar preset
+    const activeAvatarItem = document.querySelector('.avatar-presets-grid .avatar-preset-item.active');
+    const avatar = activeAvatarItem ? activeAvatarItem.getAttribute('data-avatar') : 'user1';
+
+    const beforeInput = document.getElementById('review-before-input');
+    const afterInput = document.getElementById('review-after-input');
+
+    const beforeFile = beforeInput.files.length > 0 ? beforeInput.files[0] : null;
+    const afterFile = afterInput.files.length > 0 ? afterInput.files[0] : null;
+
+    try {
+        const beforeData = await readFileAsArrayBuffer(beforeFile);
+        const afterData = await readFileAsArrayBuffer(afterFile);
+
+        const newReview = {
+            id: 'rev_' + Date.now(),
+            author: author,
+            rating: appReviewRating,
+            text: text,
+            votesUp: 0,
+            votesDown: 0,
+            avatar: avatar,
+            beforeAudioData: beforeData,
+            beforeFileType: beforeFile ? beforeFile.type : null,
+            afterAudioData: afterData,
+            afterFileType: afterFile ? afterFile.type : null
+        };
+
+        await saveToDB('reviews', newReview);
+        closeModal('write-review-modal');
+        await loadReviews();
+        renderReviews();
+    } catch (e) {
+        console.error("Failed to save review:", e);
+        showCustomAlert("Błąd podczas zapisywania opinii!");
+    }
+}
+
+
+// --- LIGHTBOX GALLERY SYSTEM ---
+function setupLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    const closeBtn = document.getElementById('btn-close-lightbox');
+
+    closeBtn.addEventListener('click', () => closeLightbox());
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+}
+
+function openLightbox(url, title) {
+    const lightbox = document.getElementById('lightbox');
+    const image = document.getElementById('lightbox-image');
+    const caption = document.getElementById('lightbox-title-text');
+
+    image.src = url;
+    caption.textContent = title;
+    lightbox.classList.add('show');
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.remove('show');
+}
+
+// Preset avatars click listeners logic for write-review modal
+document.querySelectorAll('.avatar-preset-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-preset-item').forEach(a => a.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
