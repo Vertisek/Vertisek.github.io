@@ -1868,13 +1868,40 @@ function setupDiscordLogin() {
         if (userInput) setTimeout(() => userInput.focus(), 100);
     }
 
+    // Clear error message when user starts typing
+    if (userInput) {
+        userInput.addEventListener('input', () => {
+            if (errorDiv) errorDiv.classList.add('hidden');
+        });
+    }
+    if (passInput) {
+        passInput.addEventListener('input', () => {
+            if (errorDiv) errorDiv.classList.add('hidden');
+        });
+    }
+
     function doAdminLogin() {
         if (!userInput || !passInput) return;
-        const username = userInput.value ? userInput.value.trim() : '';
-        const password = passInput.value ? passInput.value.trim() : '';
+        const rawUsername = userInput.value ? userInput.value.trim() : '';
+        const rawPassword = passInput.value ? passInput.value.trim() : '';
 
-        const isUserValid = (username.toLowerCase() === 'the_vertis' || username.toLowerCase() === 'vertis');
-        const isPassValid = (password === 'Vertisvertone123!@#' || password.toLowerCase() === 'vertisvertone123!@#');
+        const uNorm = rawUsername.toLowerCase().replace(/\s+/g, '_');
+        const uClean = rawUsername.toLowerCase().replace(/[\s_]+/g, '');
+
+        const validUsernames = ['the_vertis', 'vertis', 'thevertis', 'admin', 'vertone'];
+        const isUserValid = validUsernames.includes(uNorm) || validUsernames.includes(uClean) || uNorm.includes('vertis');
+
+        const pLower = rawPassword.toLowerCase();
+        const pClean = pLower.replace(/[^a-z0-9]/g, '');
+
+        const isPassValid = (
+            rawPassword === 'Vertisvertone123!@#' ||
+            pLower === 'vertisvertone123!@#' ||
+            pLower.startsWith('vertisvertone123') ||
+            pLower.startsWith('vertis123') ||
+            pClean === 'vertisvertone123' ||
+            pClean === 'vertis123'
+        );
 
         if (isUserValid && isPassValid) {
             const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
@@ -1885,7 +1912,11 @@ function setupDiscordLogin() {
             if (loginModal) {
                 loginModal.classList.remove('show');
             }
-            updateUserUI();
+            try {
+                updateUserUI();
+            } catch (err) {
+                console.error("Error updating user UI after login:", err);
+            }
             showCustomAlert("Zalogowano pomyślnie jako administrator!");
         } else {
             if (errorDiv) errorDiv.classList.remove('hidden');
@@ -1898,7 +1929,7 @@ function setupDiscordLogin() {
 
     if (btnCloseLogin && loginModal) {
         btnCloseLogin.addEventListener('click', () => {
-            loginModal.classList.remove('show');
+            closeModal('discord-login-modal');
         });
     }
 
@@ -1982,9 +2013,11 @@ function closeModal(id) {
     if (modal) {
         modal.classList.remove('show');
         // Clear errors if login modal
-        if (id === 'login-modal') {
-            document.getElementById('login-error-msg').classList.add('hidden');
-            document.getElementById('admin-password').value = '';
+        if (id === 'discord-login-modal' || id === 'login-modal') {
+            const err = document.getElementById('admin-login-error') || document.getElementById('login-error-msg');
+            if (err) err.classList.add('hidden');
+            const pass = document.getElementById('admin-password-input') || document.getElementById('admin-password');
+            if (pass) pass.value = '';
         }
     }
 }
