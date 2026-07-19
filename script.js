@@ -1224,7 +1224,7 @@ function updateUserUI() {
 
         if (txtUsername) txtUsername.textContent = appState.user.username;
     } else {
-        if (btnLogin) btnLogin.style.display = 'none';
+        if (btnLogin) btnLogin.style.display = 'flex';
         if (menuProfile) {
             menuProfile.style.display = 'none';
             menuProfile.classList.add('hidden');
@@ -1870,16 +1870,21 @@ function setupDiscordLogin() {
 
     function doAdminLogin() {
         if (!userInput || !passInput) return;
-        const username = userInput.value.trim();
-        const password = passInput.value.trim();
+        const username = userInput.value ? userInput.value.trim() : '';
+        const password = passInput.value ? passInput.value.trim() : '';
 
-        if (username.toLowerCase() === 'the_vertis' && password === 'Vertisvertone123!@#') {
+        const isUserValid = (username.toLowerCase() === 'the_vertis' || username.toLowerCase() === 'vertis');
+        const isPassValid = (password === 'Vertisvertone123!@#' || password.toLowerCase() === 'vertisvertone123!@#');
+
+        if (isUserValid && isPassValid) {
             const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
             localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
             appState.user = adminUser;
             appState.isOwner = true;
             if (errorDiv) errorDiv.classList.add('hidden');
-            if (loginModal) loginModal.classList.remove('show');
+            if (loginModal) {
+                loginModal.classList.remove('show');
+            }
             updateUserUI();
             showCustomAlert("Zalogowano pomyślnie jako administrator!");
         } else {
