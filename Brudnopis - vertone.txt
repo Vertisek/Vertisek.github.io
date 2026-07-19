@@ -1,0 +1,216 @@
+Siemka! Zacznijmy coś kompletnie innego. Dzisiaj stworzymy autorską stronę dla właściciela projektu. Już ci wszystko opisuję.
+
+Wygląd strony: Podobny jak strona mixly, ale nie taka sama. Też w stylu techno i też w niebieskim kolorze jak mixly. 
+Co ma się znajdować na tej stronie: Strona ma w sobie zawierać zakładki kolejno:
+
+- Kursy - przeniesiemy całą zakładkę ze strony mixly czyli "E-booki" na tę stronę, ale nie będziemy usuwać kodu z tamej strony tylko po prostu zakładka zniknie ze strony mixly.
+- Portfolio - Tutaj będzie całe portfolio mixu i masteringu i grafik. 
+- Opinie - W tej zakładce użytkownicy będą mogli napisać opinie na temat usług.
+- Usługi - W tej zakładce będzie można zamówić sobie usługę mixu i masteru lub grafiki.
+- Sociale - Po prostu linki do moich social mediów. 
+
+Jak to ma wszystko działać? Już tłumaczę!
+
+Zakładka "Portfolio": Po kliknięciu w zakładkę wyświetlą się dwa panele. Jeden po lewej stronie z tytułem "Muzyka", a drugi po prawej z tytułem "Grafiki". W panelu muzyka będę mógł jako właściciel strony za pomocą przycisku dodać zmixowany utwór w mp3 lub wav, a użytkownik nie będzie miał takiej możliwości. Pod tytułem ma być opis "Możesz przesłuchać zmixowanych przeze mnie utworów i ocenić numer za pomocą łapki w górę lub w dół". Każdy numer do odsłuchu przez użytkownika ma mieć ładny przyjemny dla oka design najlepiej jakby był w takim małym paneku do odsłuchania. Ma mieć w sobie suwak to przewijania do danego fragmentu, możliwość regulacji głośności wraz z przyciskiem głośniczka do całkowitego wyciszenia i możliwość pauzy. Wszystko coś na wzór odtwarzacza po przesłaniu pliku wav/mp3 na discordzie tylko że moje ma być ładniejsze. Pod tym przyjemne przyciski łapki w górę i w dół. Jeśli chodzi o przycisk do dodawania kolejnych utworów ma być niebieskiego koloru, ale przyjemny dla oka i też techno. Za każdym razem gdy dodam numer przycisk ma pojawiać się pod każdym numerem żeby był łatwo dostępny. Chcę mieć również możliwość usunęcia utworu i zamiany go na inny. Drugi zaś panel ma mieć tytuł "Grafiki", a pod nim opis "Sprawdź stworzone przeze mnie bannery, avatary, okładki, plakaty, panele itp." Po kliknięciu w tej przycisk mają okazać się kolejne panele tym razem o tytułach "Bannery", "Avatary", "Plakaty", "Panele", "Okładki". Obok siebie po prawej i po lewej i tak samo jeden pod drugim ładnie. Ma to działać tak, że gdy klikniemy przykładowo w panel "Bannery" to będą kolejne panele, ale tym razem w ich środku bannery. Pod każdym z paneli mają znajdować się ładpki w górę i w dół, a panele mają być jeden pod drugim. Przy panelu przycisk z możliwością napisania ręcznie feedbacku co można poprawić jednak to musisz zrobić w ladnym miejscu żeby nie przeszkadzalo i ladnie wygladalo. Każdy inny panel taki sam schemat np. okładki to okładki, plakaty to plakaty itp. Tak samo jak w panelu "muzyka" pod każda grafika ma być przycisk do mozlwosci dodania kolejnej pracy i również tylko dla wlasciciela.
+
+Zakładka "Opinie" - sprawa bardzo prosta. Po kliknięciu w tę zakładkę maja wyswietlac się opinie ludzi z którymi miałem wspolprace. Kazda opinia ma mieć lapke w gore i w dol, i maja znajdować się w panelach tak jak kazda inna rzecz. Aby dodac opinie pod kazda ostatnia opinia użytkownika ma być przycisk o nazwie "Wystaw opinię".
+
+Zakładka "Usługi" - Mają być na razie dwa panele. Jeden po prawej drugi po lewej i... po prawej będzie panel z tutułem "Mix/mastering" z opisem "Zamów mix i master twojego numeru!". Na panelu ma być jakaś ładna grafika związana z mixem, ale taka, która nie jebie po oczach i jest przejrzysta. Najlepiej jakby była w tle i jeszcze na tym samym panelu przycisk "Sprawdź". Po kliknięciu w ten przycisk ma się pojawić  panel z opisem usługi IDENTYCZNY jak napisałem poniżej:
+
+Szukasz unikatowego, dobrze brzmiącego mixu i głośnego masteru? Zamów go już teraz!
+
+Podstawowa cena usługi: 50zł
+
+Co oferuję:
+
+〕Unikalne brzmienie nadające klimat
+〕Wyrównywanie ścieżek
+〕Strojenie wokalu
+〕Ewentualne wskazówki dotyczące nagrania i nie tylko
+〕Szybki czas realizacji (max 48h)
+〕Nielimitowane poprawki
+
+Dodatkowe info:
+
+〕6 ścieżek w cenie + każda kolejna 5zł
+〕Stały kontakt przez discorda/instagrama/tiktoka
+
+Czego wymagam:
+
+〕Dobre i przejrzyste nazewnictwo ścieżek
+〕Podania tonacji oraz BPM
+〕Wysłania wersji demonstracyjnej utworu (prevki)
+
+Uwaga! 
+
+W przypadku słabej jakości nagrania mam prawo odmówić ci usługi. Zależy mi na twoim zadowoleniu, a sam mix nie uratuje słabego nagrania. 
+
+
+Jeśli chcesz przesłuchać zmixowane przeze mnie utwory, wejdź w zakładkę portfolio. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+
+Koniec opisu. (tego nie pisz)
+
+Na dole w panelu będzie przycisk "Zamów" i przekieruje on użytkownika na razie do wiadomości prywatnej ze mną. Pozniej będzie robione to z płatnościami online.
+
+Teraz z grafikami i oto opis tez przepisz identycznie. oczywiście będzie to panel po prawej stronie i koloru fioletowego, a ten z mixem po lewej koloru niebieskiego:
+
+Szukasz ładnej, przejrzystej, kreatywnej oraz unikalnej grafiki? Zrobię!
+
+Ceny:
+
+● Banner - 20zł
+● Avatar - 15zł
+● Miniaturka - 15zł
+● Plakat - 25zł
+● Okładka - 15zł
+● Panele - 5zł za jeden
+
+Co oferuję:
+
+〕Przejrzystą i schludną pracę
+〕Kreatywność
+〕Dopasowany klimat
+〕Ciekawy design
+〕Krótki czas realizacji (do 48h)
+〕Stały kontakt
+〕Nielimitowane poprawki
+
+Dodatkowe info:
+
+〕Nielimitowane poprawki
+〕Stały kontakt przez discorda/instagrama/tiktoka
+〕Miło jakbyś miał/a swoją wizję na daną pracę
+
+Jeśli chcesz zobaczyć prace które zrobiłem, wejdź w zakładkę portfolio i zobacz to co cię interesuje. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+
+Koniec opisu. (tego nie pisz)
+
+Sociale: Możesz przenieść panel ze strony mixly tylko bez panelu "Vezy" i cały ten kod z vertisem związany, aby były już wszystkie linki itp. 
+
+
+Cała strona ma być przejrzysta, mieć fajny design i być podobna, lecz nie taka sama jak strona mixly.
+
+Działaj.
+
+
+
+Opinie i pod nimi łapki w dół i góre
+przycisk otwórz
+
+
+
+Pare poprawek.
+
+1. Pod vertone w lewym gornym rogu nie ma pisać official portfolio, a ta poswiata niebieska to ja przekopiuj ze strony mixly i daj ja tez taka niebieska jak ta.
+2. Jeśli chodzi o zakladke kursy to jest okay oprócz tych przyciskow "Sprawdz". Ten po lewej zmien na taki żeby był jakby niedostępny i było napisane zamiast zamiast sprawdz to wkrótce, a z tego po prawej usun sprawdz i zostaw wkrótce. Tylko to wkrótce ma ladniej wyglądac.
+3. W zakładce portfolio chodzilo mi o całkowicie inne działanie zakładki. Ma to wygladac tak.
+
+Jest jeden panel po lewej, a drugi po prawej. Po lewej muzyka i po prawej grafiki.
+
+Teraz nie wygląda to zle może jedynie pokombinowal bym tu z odcieniami niebieskim i fioletowym lub zielonym i na pewno trzeba zmienić panel na taki, w którym nie ma od razu już utworow. Uzytkownik ma kliknąć w ten panel, a dokładnie w przycisk na tym panelu o nazwie "Sprawdź" i to ma przekierować na kolejna strone gdzie sa wszystkie utwory. Przypominam ze chce mieć możliwości jak administrator takie:
+
+a) Mogę usunąć numer z poziomu strony przyciskiem np. ikonka kosza w każdym prawym gornym rogu piosenki
+b) Mogę dodac kolejny utwor takim samym przyciskiem "DODAJ NOWY UTWÓR" tylko ze na tej stronie
+c) Usunąć komentarz oraz łapki w górę oraz w dół po wejściu w nie
+
+Wszystko inne typu łapki w dół i górę, odtwarzanie, pauzowanie oraz możliwość przesuniecia utworu do danego fragmentu i regulacja glosnosci z wyciszeniem tez przekopiuj. Dodatkowo dodaj możliwość napisania krótkiego feedbacka dotyczącego numeru, ale ma być to zrobione ładnie. 
+
+Jeśli chodzi o grafiki to podobnie, ale troche bardziej skomplikowane.
+
+Będzie to panel po prawej stronie z takim samym opisem (opisu nigdzie nie zmieniamy). Po kliknięciu wyświetlą się kolejne mniejsze panele takie same jak na tej stronie bo ładnie wyglądają. Użytkownik może wejść w dany panel i w każdym z tych paneli będzie możliwość
+
+Dla mnie jako własciciela:
+
+a) Dodać kolejną grafikę
+b) Usunąć daną grafikę
+c) Usunąć komentarz oraz łapki w górę oraz w dół po wejściu w nie
+
+Z panelu "Grafiki" ma zniknąć każda grafika która jest pod spodem.
+
+Podsumowująć interfejs zakładki:
+
+Dwa panele jeden po prawej drugi po lewej i tylko napisy "MUZYKA" oraz "GRAFIKI" z jakimiś emotkami o ile będą ładnie wyglądać. Pod tutyłem i NIE USUNIETYM ANI ZMIENIONYM OPISEM przycisk "Sprawdź". To prowadzi do stronki z innymi rzeczami to ci opisałem wyżej.
+
+4. Zakładka opinie wygląda ładnie i ma sens. Możesz jeszcze dodać możliwość dla użytkownika załączenia dwoch plikow mp3/wav jako numer do porównania przed miksem i po miksie. To może być fajne rozwiązanie na wiarygodność.
+
+5. Zakładka usługi wygląda mega fajnie, ale jedna rzecz mi nie pasuje. Usuń w każdym opisie MOJE 〕(te szare), bo te fioletowe i niebieskie o wiele lepiej wygladaja. W dodatku ten napis "Zamów grafikę" oraz "Zamów mix & mastering" zmień tak, aby był na dole i nie trzeba było przewijać na dół aby się pojawił. Usuń też przycisk powrót bo jest nie potrzebny. Jeszcze przy "Zamów mix & mastering" nazwe przycisku zmień na "Zamów mix & master" oraz usuń ikonkę która jest obok ma być tylko sam napis z tym tłem fajnym. Usuń też to podkreślenie, ale nie usuwaj z niego kodu.
+
+6. Zakładka socjale wygląda bardzo ładnie, ale zmienimy trochę opis pod "MOJE SOCIAL MEDIA" na "Sprawdź moją twórczość bezpośrednio na social mediach oraz w razie potrzeby pisz śmiało (tutaj dodaj jakąś przyjazną emotkę)."
+
+7. Stworz nowa zakladke w takim samym designie jak poprzednie tylko inna ikonka, nazwij ja "Polityka prywatności i regulamin" (możesz tutaj napisać jedno pod drugim żeby ładnie wyglądało) i wpisz tam na razie tylko ten tekst i ładnie jakoś to zrób żeby było przyjemnie dla oka. Tekst:
+
+Prawa autorskie
+
+© [Vertone ze współpracą z zespołem ReTrap music / Oscar "Vertis" Legutko] [12.07.2026]. Wszelkie prawa zastrzeżone.
+
+Witryna internetowa oraz aplikacja internetowa, w tym ich kod źródłowy, projekt graficzny, interfejs użytkownika, funkcjonalności, treści, bazy danych i pozostałe elementy, stanowią przedmiot ochrony prawnej na podstawie przepisów o prawie autorskim.
+
+Kopiowanie, modyfikowanie, rozpowszechnianie, dekompilacja lub wykorzystywanie całości bądź części serwisu i aplikacji bez uprzedniej pisemnej zgody właściciela praw jest zabronione.
+
+8. Stwórz zakładkę "FAQ" i przekopiuj tam wszystko 1:1 z mojej strony mixly. Usuń tylko ceo vezy oraz tego drugiego zostaw tylko vertis. Kolor strony i design taki ma być jak vertone. Przekopiuj oraz zmien opisy tak jak poniżej:
+
+a) Czym jest Mixly?
+Mixly to aplikacja oraz strona internetowa stworzona przez dwóch zajawionych muzyką przyjaciół. Ma na celu usprawnić pracę, pomóc nowym osobom w tworzeniu muzyki oraz dać przestrzeń i możliwości na kreatywną pracę jak i zabawę z tą dziedziną sztuki.
+
+zmien na: Czym jest Vertone?
+Vertone to strona internetowa założona przez osobę o nicku Vertis, która pasjonuje się tworzeniem muzyki od ponad 3 lat. Strona to tak naprawdę sklep połączony z portfolio. Nazwa Vertone wzięła się z połączenia nicku "Vertis" i muzycznego "Tone".
+
+b) Kiedy powstała ta strona?
+Oficjalne prace nad aplikacją zaczęły się dokładnie 11.07.2026 roku.
+
+c) Co ma na celu?
+Vertis tworząc tę stronę miał na celu wesprzeć i pomóc osobom, które dopiero zaczynają z muzyką. Tak naprawdę pół za darmo, a pół za pieniądze. Gdy kupisz mix to zrobię streama na youtube z tego jak mixuje, a ty możesz na nim nauczyć się wielu nowych rzeczy, ponieważ tłumaczę wszystko co robię i dlaczego. Lub możesz kupić kurs mixu i samemu nauczyć się podstaw, aby później podziałać w praktyce z tym czego się nauczyłeś.
+
+9. Zakładkę "Sociale" na razie ukryj, ale nie usuwaj kodu z niej.
+
+Po zrobieniu pracy zrób foldery tak jak z mixly i posegreguj wszystko ładnie i schludnie. Za każdym razem po zrobieniu pracy aktualizuj wszystko i będzie okay.
+
+Kolejne poprawki bo się chyba nie zrozumieliśmy...
+
+1. W zakładce portfolio nadal mnie nie rozumiesz. Maja być tylko dwa panele. Po lewej muzyka i po prawej Grafiki. Przy każdym panelu ma być przycisk "Sprawdz", a każdy ten panel ma prowadzic do osobnej i za razem kolejnej stronki. Wszystko ci wcześniej dokładnie opisałem. Usun wszystko co jest pod tymi dwoma panelami, a przycisk "Wróć" dodaj przy każdej stronie w lewym górnym rogu, aby była możliwość powrotu na poprzednią stronę.
+
+2. Zakładka opinie jest okej, ale dodaj mi tam możliwość usuwania opinii i tyle. Ma to wyglądać tak, że przy każdej opinii w prawym górnym rogu mam ikonkę kosza, ale dopiero po najechaniu na opinię. Ma mieć animację fajną ten kosz takiego pojawiania się.
+
+4. FAQ. Tutaj się nie zrozumieliśmy w ogóle. Jeszcze raz wyraźniej ci napiszę. PRZEKOPIUJ KOD Z MOJEJ STRONY MIXLY TAM GDZIE JEST FAQ I WKLEJ DO STRONY VERTONE. DODAJ I ZMIEŃ TYLKO PYTANIA NA TAKIE, KTÓRE PISAŁEM CI WCZEŚNIEJ ORAZ ZMIEŃ WYGLĄD TYCH SOCIALI. JAKO SOCIALE ZOSTAW PO PROSTU PANEL KTÓRY JEST POD PANELEM Z NAPISEM "VERTIS - CEO STRONY". WSZYSTKO INNE USUŃ NIECH ZOSTANĄ TYLKO TE PYTANIA ORAZ PANEL Z SOCIALAMI.
+
+Nie sadzilem ze to powiem, ale bardzo dobra robota. Teraz ładnie to wygląda wizualnie. Wprowadzimy teraz kilka takich malutkich wizualnych poprawek i potem będziemy dzialac już z poważniejszymi rzeczami.
+
+1. Wywal mi napis "portfolio online" w lewym górnym rogu.
+2. Daj możliwość zalogowania się do strony przez discorda. Zrób mi przy tym dokładną instrukcję jakie czynności ja mam zrobić, ale zrób tyle ile możesz za mnie. Zależy mi na designie oraz tym co najważniejsze czyli poprawności działania.
+3. W aplikacji mixly w prawym górnym rogu jest taki trybik czyli ustawienia. Zaglądnij tam i przekopiuj cały ten kod stamtąd wraz z tym trybikiem. Tam jest z tego co pamiętam możliwość ustawienia języka strony, motywu (ciemno lub jasno) i jeszcze jedna zakładka, która jest niedostępna, więc ją możesz ukryć (nie usuwaj kodu z niej). Z tym sobie raczej poradzisz bez problemu.
+4. Z takich rzeczy wizualnych jeszcze to w zakładce kursy są te panele. One wyglądają świetnie, lecz na każdym z nich jest grafika książki na białym tle. Usuń to tło lub zrób takie, które będzie przyjemne dla oka, ale książki zostaw bo fajnie wyglądają z tymi panelami.
+
+
+Na ten moment to tyle. Zrób logowanie przez tego discorda z ładnym przyciskiem w prawym górnym rogu strony i nazwij go "Zaloguj" z ikonką discorda obok napisu. Napis ma pasować do designu strony. 
+
+Poprawki:
+
+1. Wrzuciłem swoje dwa zmixowane numery do portfolio i w żadnym nie działa odtwarzanie. Napraw to. Dodatkowo możesz dodać jakąś fajną animację łapki w górę i w dół żeby nie było to takie nudne i "suche". Tak samo z każdą inną zakładką i wszystkim. To powiadomienie na górze wygląda jakby strona była niedopracowana.
+2. Gdy usuwam jakiś numer z portfolio i klikam kosz to nie chce żadnego powiadomienia na górze ekranu. Chcę jakieś ładnie wyglądające co się będzie na środku wyświetlało w małym okienku.
+3. Obok tych łapek w góre i w dół daj ikonkę jakby wiadomości żeby po kliknięciu w nią można było napisać ten feedback o którym ci mówiłem. Chyba że masz na to lepszy pomysł lub jest już taka możliwość to opisz gdzie i zostaw tak jak jest.
+4. Popraw tłumaczenie strony. Gdy klikam w dany język to tłumaczy się tylko okienko, a nie cała strona. W dodatku język arabski trzeba całkowicie usunąć, bo nie działa tak jak powinien, więc zrób to. Usuń z niego kod i zrób tak żeby go po prostu nie było.
+5. W sumie wszędzie gdzie masz te łapki w dół i w górę możesz dodać tę samą animację o której mówiłem ci wcześniej.
+
+Na razie tyle - działaj.
+
+
+
+Małe poprawki. 
+
+1. W portfolio muzycznym źle działa usuwanie utworów. Gdy klikam usuń to faktycznie usuwa się numer, ale gdy chcę usunąć ostatni to nie mogę. Zrób po prostu tak żebym mógł usunąć wszystkie które chcę bez kombinacji. Gdy np. usunę wszystkie utwory i na liście nie będzie żadnego to zrób na górze ten przycisk tak jakbym chciał dodać utwór normalnie jak zwykle. Możesz dodać też taki smaczek, że jak przy dodawaniu utworu wgram plik audio to on zamiast okienka i komunikatu że wgrałem plik pokaże się plik czy coś takiego w miejscu drop zone i tyle. Nic więcej tu nie zmieniaj.
+
+2. Usuń przycisk dodaj nową pracę pod panelami w portfolio graficznym. Taki przycisk ma być tylko w danym panelu. Napraw tam też działanie przycisku kosza, bo ma działać tak jak w dopiero wymienionym portfolio muzycznym.
+
+3. W opiniach to samo. Wszystko fajnie działa, ale nie funkcja usuwania i też go napraw.
+
+4. Usuń logowanie przez discorda na razie (ukryj je.) tylko dla administratora daj możliwość logowania się tak jak jest teraz ewentualnie na hasło i nazwę użytkownika żeby było bezpieczniej. 
+
+Nazwa użytkownika: The_vertis
+Hasło: Vertisvertone123!@#
+
+5. Możesz lekko podjaśnić napisy w zakładce kursy dokładnie tam w mixie i masteringu. O te mi chodzi, które są na screenie. Takie dziwnie szare są względem strony.
+
+Na razie tyle.
+
+
+
