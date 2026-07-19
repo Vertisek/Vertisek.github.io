@@ -1200,7 +1200,7 @@ function updateUserUI() {
     const musicAdminActions = document.getElementById('music-admin-actions');
     const graphicsAdminActions = document.getElementById('graphics-admin-actions');
 
-    if (appState.user) {
+    if (appState.user && appState.isOwner) {
         if (btnLogin) btnLogin.style.display = 'none';
         if (menuProfile) {
             menuProfile.style.display = 'flex';
@@ -1224,7 +1224,7 @@ function updateUserUI() {
 
         if (txtUsername) txtUsername.textContent = appState.user.username;
     } else {
-        if (btnLogin) btnLogin.style.display = 'flex';
+        if (btnLogin) btnLogin.style.display = 'none';
         if (menuProfile) {
             menuProfile.style.display = 'none';
             menuProfile.classList.add('hidden');
@@ -1847,75 +1847,118 @@ function applyLanguage(lang) {
 
 // Admin Login Handlers
 function setupDiscordLogin() {
-        const loginModal = document.getElementById('discord-login-modal');
-        const btnOpenLogin = document.getElementById('btn-discord-login');
-        const btnCloseLogin = document.getElementById('btn-close-discord-login');
-        const menuProfile = document.getElementById('user-profile-menu');
-        const dropdown = document.getElementById('user-profile-dropdown');
-        const btnLogout = document.getElementById('btn-discord-logout');
+    const loginModal = document.getElementById('discord-login-modal');
+    const btnOpenLogin = document.getElementById('btn-discord-login');
+    const btnCloseLogin = document.getElementById('btn-close-discord-login');
+    const menuProfile = document.getElementById('user-profile-menu');
+    const dropdown = document.getElementById('user-profile-dropdown');
+    const btnLogout = document.getElementById('btn-discord-logout');
+    
+    const adminForm = document.getElementById('admin-login-form');
+    const userInput = document.getElementById('admin-username-input');
+    const passInput = document.getElementById('admin-password-input');
+    const btnSubmit = document.getElementById('btn-submit-admin-login');
+    const errorDiv = document.getElementById('admin-login-error');
 
-        const adminForm = document.getElementById('admin-login-form');
-        const userInput = document.getElementById('admin-username-input');
-        const passInput = document.getElementById('admin-password-input');
-        const errorDiv = document.getElementById('admin-login-error');
+    function openAdminModal() {
+        if (userInput) userInput.value = '';
+        if (passInput) passInput.value = '';
+        if (errorDiv) errorDiv.classList.add('hidden');
+        if (loginModal) loginModal.classList.add('show');
+        if (userInput) setTimeout(() => userInput.focus(), 100);
+    }
 
-        if (btnOpenLogin && loginModal) {
-            btnOpenLogin.addEventListener('click', () => {
-                if (userInput) userInput.value = '';
-                if (passInput) passInput.value = '';
-                if (errorDiv) errorDiv.classList.add('hidden');
-                loginModal.classList.add('show');
-            });
-        }
+    function doAdminLogin() {
+        if (!userInput || !passInput) return;
+        const username = userInput.value.trim();
+        const password = passInput.value.trim();
 
-        if (btnCloseLogin && loginModal) {
-            btnCloseLogin.addEventListener('click', () => {
-                loginModal.classList.remove('show');
-            });
-        }
-
-        if (adminForm) {
-            adminForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const username = userInput.value.trim();
-                const password = passInput.value.trim();
-
-                if (username === 'The_vertis' && password === 'Vertisvertone123!@#') {
-                    const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
-                    localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
-                    appState.user = adminUser;
-                    appState.isOwner = true;
-                    if (errorDiv) errorDiv.classList.add('hidden');
-                    loginModal.classList.remove('show');
-                    updateUserUI();
-                    showCustomAlert("Zalogowano pomyślnie jako administrator!");
-                } else {
-                    if (errorDiv) errorDiv.classList.remove('hidden');
-                }
-            });
-        }
-
-        // Profile Dropdown Toggle
-        if (menuProfile && dropdown) {
-            menuProfile.addEventListener('click', (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('hidden');
-            });
-
-            document.addEventListener('click', () => {
-                dropdown.classList.add('hidden');
-            });
-        }
-
-        if (btnLogout) {
-            btnLogout.addEventListener('click', () => {
-                localStorage.removeItem('vertone_session_user');
-                appState.user = null;
-                appState.isOwner = false;
-                updateUserUI();
-            });
+        if (username.toLowerCase() === 'the_vertis' && password === 'Vertisvertone123!@#') {
+            const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
+            localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
+            appState.user = adminUser;
+            appState.isOwner = true;
+            if (errorDiv) errorDiv.classList.add('hidden');
+            if (loginModal) loginModal.classList.remove('show');
+            updateUserUI();
+            showCustomAlert("Zalogowano pomyślnie jako administrator!");
+        } else {
+            if (errorDiv) errorDiv.classList.remove('hidden');
         }
     }
+
+    if (btnOpenLogin) {
+        btnOpenLogin.addEventListener('click', openAdminModal);
+    }
+
+    if (btnCloseLogin && loginModal) {
+        btnCloseLogin.addEventListener('click', () => {
+            loginModal.classList.remove('show');
+        });
+    }
+
+    if (btnSubmit) {
+        btnSubmit.addEventListener('click', (e) => {
+            e.preventDefault();
+            doAdminLogin();
+        });
+    }
+
+    if (adminForm) {
+        adminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            doAdminLogin();
+        });
+    }
+
+    // Secret Admin Trigger 1: Keyboard shortcut (Ctrl + Shift + A  OR  Ctrl + Alt + L)
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) ||
+            (e.ctrlKey && e.altKey && (e.key === 'L' || e.key === 'l'))) {
+            e.preventDefault();
+            openAdminModal();
+        }
+    });
+
+    // Secret Admin Trigger 2: Triple click logo (top left logo)
+    let logoClicks = 0;
+    let logoClickTimer = null;
+    document.querySelectorAll('.logo, .logo-title, .top-header-left').forEach(logoEl => {
+        logoEl.addEventListener('click', () => {
+            logoClicks++;
+            if (logoClicks >= 3) {
+                logoClicks = 0;
+                clearTimeout(logoClickTimer);
+                openAdminModal();
+            } else {
+                clearTimeout(logoClickTimer);
+                logoClickTimer = setTimeout(() => { logoClicks = 0; }, 1500);
+            }
+        });
+    });
+
+    // Profile Dropdown Toggle
+    if (menuProfile && dropdown) {
+        menuProfile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            dropdown.classList.add('hidden');
+        });
+    }
+
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            localStorage.removeItem('vertone_session_user');
+            appState.user = null;
+            appState.isOwner = false;
+            updateUserUI();
+            showCustomAlert("Wylogowano pomyślnie.");
+        });
+    }
+}
 
     function handleDiscordHashLogin() {
         // Legacy OAuth hash redirect handler disabled

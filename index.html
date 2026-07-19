@@ -27,8 +27,8 @@
             </div>
             
             <div class="top-header-right" style="display: flex; align-items: center; gap: 15px;">
-                <!-- Admin Login Button -->
-                <button class="btn-discord-login" id="btn-discord-login">
+                <!-- Admin Login Button (Hidden for public visitors) -->
+                <button class="btn-discord-login" id="btn-discord-login" style="display: none;">
                     <span style="font-size: 14px;">🔑</span>
                     <span data-i18n="btn_login">Zaloguj</span>
                 </button>
@@ -861,7 +861,7 @@
             <h3 style="margin-top: 0; margin-bottom: 8px; font-family: var(--font-tech); color: var(--color-blue-light); text-transform: uppercase; font-size: 16px; letter-spacing:0.05em;">Logowanie Administratora</h3>
             <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">Wprowadź dane dostępowe administratora Vertone.</p>
 
-            <form id="admin-login-form" onsubmit="return false;">
+            <form id="admin-login-form">
                 <div class="modal-form-group" style="margin-bottom: 16px;">
                     <label for="admin-username-input" style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Nazwa użytkownika:</label>
                     <input type="text" id="admin-username-input" class="input-dark" placeholder="np. The_vertis" style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="username">
@@ -877,7 +877,7 @@
                 </div>
 
                 <div class="modal-actions" style="border-top: none; padding-top: 0; margin-top: 0;">
-                    <button type="submit" class="btn btn-primary btn-full btn-techno" id="btn-submit-admin-login" style="padding: 12px 20px;">
+                    <button type="button" class="btn btn-primary btn-full btn-techno" id="btn-submit-admin-login" style="padding: 12px 20px;">
                         <span>Zaloguj się</span>
                     </button>
                 </div>
