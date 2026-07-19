@@ -1192,6 +1192,7 @@ function checkUserIsOwner(user) {
 
 function updateUserUI() {
     console.log("DEBUG: updateUserUI called. isOwner:", appState.isOwner, "user:", appState.user);
+    const ownerBanner = document.getElementById('owner-mode-banner');
     const btnLogin = document.getElementById('btn-discord-login');
     const menuProfile = document.getElementById('user-profile-menu');
     const imgAvatar = document.getElementById('user-avatar-img');
@@ -1202,6 +1203,10 @@ function updateUserUI() {
     const graphicsAdminActions = document.getElementById('graphics-admin-actions');
 
     if (appState.user && appState.isOwner) {
+        if (ownerBanner) {
+            ownerBanner.style.display = 'flex';
+            ownerBanner.classList.remove('hidden');
+        }
         if (btnLogin) {
             btnLogin.style.display = 'none';
             btnLogin.classList.add('hidden');
@@ -1228,6 +1233,10 @@ function updateUserUI() {
 
         if (txtUsername) txtUsername.textContent = appState.user.username || 'Administrator';
     } else {
+        if (ownerBanner) {
+            ownerBanner.style.display = 'none';
+            ownerBanner.classList.add('hidden');
+        }
         if (btnLogin) {
             btnLogin.style.display = 'flex';
             btnLogin.classList.remove('hidden');
