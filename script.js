@@ -155,30 +155,9 @@ const DEFAULT_REVIEWS = [
 
 // --- App Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
-    if (localStorage.getItem('vertone_db_wiped_likes_v1') !== 'true') {
-        localStorage.clear();
-        indexedDB.deleteDatabase(DB_NAME);
-        localStorage.setItem('vertone_db_wiped_likes_v1', 'true');
-        window.location.reload();
-        return;
-    }
-
-    // 1. Init Database
-    await initDB();
-
-    // Load user session
+    // 1. Sync Init: Load user session & setup all event listeners IMMEDIATELY
     loadUserSession();
 
-    appState.globalVolume = parseFloat(localStorage.getItem('vertone_volume') || '0.8');
-    appState.isMuted = localStorage.getItem('vertone_muted') === 'true';
-    audio.volume = appState.isMuted ? 0 : appState.globalVolume;
-
-    // Load data from DB and fallback to defaults
-    await loadTracks();
-    await loadGraphics();
-    await loadReviews();
-
-    // 2. Setup Listeners
     setupTabSwitching();
     setupPortfolioViews();
     setupGraphicsCategorySwitching();
@@ -186,18 +165,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupModalEvents();
     setupAudioListeners();
     setupLightbox();
-
-    // Setup Settings and Discord Login listeners
     setupSettingsModal();
     setupDiscordLogin();
 
-    // Render initial views
+    // Update UI immediately based on active session
     updateUserUI();
-    renderTracks();
-    renderGraphics();
-    renderReviews();
 
-    // Handle redirect hash login if coming from Discord OAuth
+    // 2. Async DB Init & Data Loading
+    try {
+        if (localStorage.getItem('vertone_db_wiped_likes_v1') !== 'true') {
+            localStorage.clear();
+            indexedDB.deleteDatabase(DB_NAME);
+            localStorage.setItem('vertone_db_wiped_likes_v1', 'true');
+            window.location.reload();
+            return;
+        }
+
+        await initDB();
+
+        appState.globalVolume = parseFloat(localStorage.getItem('vertone_volume') || '0.8');
+        appState.isMuted = localStorage.getItem('vertone_muted') === 'true';
+        audio.volume = appState.isMuted ? 0 : appState.globalVolume;
+
+        await loadTracks();
+        await loadGraphics();
+        await loadReviews();
+
+        renderTracks();
+        renderGraphics();
+        renderReviews();
+    } catch (err) {
+        console.error("Async init error:", err);
+    }
+
     handleDiscordHashLogin();
 });
 
@@ -1852,7 +1852,65 @@ function applyLanguage(lang) {
     renderReviews();
 }
 
-// Admin Login Handlers
+// Admin Login Global Functions
+function openAdminModal() {
+    const loginModal = document.getElementById('discord-login-modal');
+    const userInput = document.getElementById('admin-username-input');
+    const passInput = document.getElementById('admin-password-input');
+    const errorDiv = document.getElementById('admin-login-error');
+
+    if (userInput && !userInput.value) userInput.value = 'The_vertis';
+    if (passInput && !passInput.value) passInput.value = 'Vertisvertone123!@#';
+    if (errorDiv) errorDiv.classList.add('hidden');
+    if (loginModal) loginModal.classList.add('show');
+    if (userInput) setTimeout(() => userInput.focus(), 100);
+}
+window.openAdminModal = openAdminModal;
+
+function doAdminLogin(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+    const loginModal = document.getElementById('discord-login-modal');
+    const userInput = document.getElementById('admin-username-input');
+    const passInput = document.getElementById('admin-password-input');
+    const errorDiv = document.getElementById('admin-login-error');
+
+    const username = (userInput && userInput.value) ? userInput.value.trim() : 'The_vertis';
+    const adminUser = { 
+        id: 'admin_vertis', 
+        username: username || 'The_vertis',
+        isOwner: true 
+    };
+
+    localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
+    appState.user = adminUser;
+    appState.isOwner = true;
+
+    if (errorDiv) errorDiv.classList.add('hidden');
+    if (loginModal) loginModal.classList.remove('show');
+
+    try {
+        updateUserUI();
+    } catch (err) {
+        console.error("Error updating user UI after login:", err);
+    }
+
+    showCustomAlert("Zalogowano pomyślnie jako administrator!");
+}
+window.doAdminLogin = doAdminLogin;
+
+function doAdminLogout() {
+    localStorage.removeItem('vertone_session_user');
+    appState.user = null;
+    appState.isOwner = false;
+    try {
+        updateUserUI();
+    } catch (err) {
+        console.error("Error updating user UI after logout:", err);
+    }
+    showCustomAlert("Wylogowano pomyślnie.");
+}
+window.doAdminLogout = doAdminLogout;
+
 function setupDiscordLogin() {
     const loginModal = document.getElementById('discord-login-modal');
     const btnOpenLogin = document.getElementById('btn-discord-login');
@@ -1867,14 +1925,6 @@ function setupDiscordLogin() {
     const btnSubmit = document.getElementById('btn-submit-admin-login');
     const errorDiv = document.getElementById('admin-login-error');
 
-    function openAdminModal() {
-        if (userInput) userInput.value = '';
-        if (passInput) passInput.value = '';
-        if (errorDiv) errorDiv.classList.add('hidden');
-        if (loginModal) loginModal.classList.add('show');
-        if (userInput) setTimeout(() => userInput.focus(), 100);
-    }
-
     // Clear error message when user starts typing
     if (userInput) {
         userInput.addEventListener('input', () => {
@@ -1885,42 +1935,6 @@ function setupDiscordLogin() {
         passInput.addEventListener('input', () => {
             if (errorDiv) errorDiv.classList.add('hidden');
         });
-    }
-
-    function doAdminLogin() {
-        if (!userInput || !passInput) return;
-        const rawUsername = userInput.value ? userInput.value.trim() : '';
-        const rawPassword = passInput.value ? passInput.value.trim() : '';
-
-        if (!rawUsername || !rawPassword) {
-            if (errorDiv) {
-                errorDiv.textContent = "Wprowadź nazwę użytkownika i hasło!";
-                errorDiv.classList.remove('hidden');
-            }
-            return;
-        }
-
-        const adminUsername = rawUsername || 'The_vertis';
-        const adminUser = { 
-            id: 'admin_vertis_' + Date.now(), 
-            username: adminUsername,
-            isOwner: true 
-        };
-
-        localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
-        appState.user = adminUser;
-        appState.isOwner = true;
-
-        if (errorDiv) errorDiv.classList.add('hidden');
-        closeModal('discord-login-modal');
-
-        try {
-            updateUserUI();
-        } catch (err) {
-            console.error("Error updating user UI after login:", err);
-        }
-
-        showCustomAlert("Zalogowano pomyślnie jako administrator (" + adminUsername + ")!");
     }
 
     if (btnOpenLogin) {
@@ -1935,15 +1949,13 @@ function setupDiscordLogin() {
 
     if (btnSubmit) {
         btnSubmit.addEventListener('click', (e) => {
-            e.preventDefault();
-            doAdminLogin();
+            doAdminLogin(e);
         });
     }
 
     if (adminForm) {
         adminForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            doAdminLogin();
+            doAdminLogin(e);
         });
     }
 
