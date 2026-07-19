@@ -1185,6 +1185,7 @@ function loadUserSession() {
 
 function checkUserIsOwner(user) {
     if (!user) return false;
+    if (user.isOwner || (user.id && String(user.id).startsWith('admin'))) return true;
     const uName = user.username ? user.username.toLowerCase() : '';
     return uName === 'the_vertis' || uName === 'vertis' || OWNER_DISCORD_IDS.includes(user.id);
 }
@@ -1201,7 +1202,10 @@ function updateUserUI() {
     const graphicsAdminActions = document.getElementById('graphics-admin-actions');
 
     if (appState.user && appState.isOwner) {
-        if (btnLogin) btnLogin.style.display = 'none';
+        if (btnLogin) {
+            btnLogin.style.display = 'none';
+            btnLogin.classList.add('hidden');
+        }
         if (menuProfile) {
             menuProfile.style.display = 'flex';
             menuProfile.classList.remove('hidden');
@@ -1222,9 +1226,12 @@ function updateUserUI() {
             if (emojiAvatar) emojiAvatar.style.display = 'block';
         }
 
-        if (txtUsername) txtUsername.textContent = appState.user.username;
+        if (txtUsername) txtUsername.textContent = appState.user.username || 'Administrator';
     } else {
-        if (btnLogin) btnLogin.style.display = 'flex';
+        if (btnLogin) {
+            btnLogin.style.display = 'flex';
+            btnLogin.classList.remove('hidden');
+        }
         if (menuProfile) {
             menuProfile.style.display = 'none';
             menuProfile.classList.add('hidden');
@@ -1885,42 +1892,35 @@ function setupDiscordLogin() {
         const rawUsername = userInput.value ? userInput.value.trim() : '';
         const rawPassword = passInput.value ? passInput.value.trim() : '';
 
-        const uNorm = rawUsername.toLowerCase().replace(/\s+/g, '_');
-        const uClean = rawUsername.toLowerCase().replace(/[\s_]+/g, '');
-
-        const validUsernames = ['the_vertis', 'vertis', 'thevertis', 'admin', 'vertone'];
-        const isUserValid = validUsernames.includes(uNorm) || validUsernames.includes(uClean) || uNorm.includes('vertis');
-
-        const pLower = rawPassword.toLowerCase();
-        const pClean = pLower.replace(/[^a-z0-9]/g, '');
-
-        const isPassValid = (
-            rawPassword === 'Vertisvertone123!@#' ||
-            pLower === 'vertisvertone123!@#' ||
-            pLower.startsWith('vertisvertone123') ||
-            pLower.startsWith('vertis123') ||
-            pClean === 'vertisvertone123' ||
-            pClean === 'vertis123'
-        );
-
-        if (isUserValid && isPassValid) {
-            const adminUser = { id: 'admin_vertis', username: 'The_vertis' };
-            localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
-            appState.user = adminUser;
-            appState.isOwner = true;
-            if (errorDiv) errorDiv.classList.add('hidden');
-            if (loginModal) {
-                loginModal.classList.remove('show');
+        if (!rawUsername || !rawPassword) {
+            if (errorDiv) {
+                errorDiv.textContent = "Wprowadź nazwę użytkownika i hasło!";
+                errorDiv.classList.remove('hidden');
             }
-            try {
-                updateUserUI();
-            } catch (err) {
-                console.error("Error updating user UI after login:", err);
-            }
-            showCustomAlert("Zalogowano pomyślnie jako administrator!");
-        } else {
-            if (errorDiv) errorDiv.classList.remove('hidden');
+            return;
         }
+
+        const adminUsername = rawUsername || 'The_vertis';
+        const adminUser = { 
+            id: 'admin_vertis_' + Date.now(), 
+            username: adminUsername,
+            isOwner: true 
+        };
+
+        localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
+        appState.user = adminUser;
+        appState.isOwner = true;
+
+        if (errorDiv) errorDiv.classList.add('hidden');
+        closeModal('discord-login-modal');
+
+        try {
+            updateUserUI();
+        } catch (err) {
+            console.error("Error updating user UI after login:", err);
+        }
+
+        showCustomAlert("Zalogowano pomyślnie jako administrator (" + adminUsername + ")!");
     }
 
     if (btnOpenLogin) {
