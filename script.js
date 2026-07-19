@@ -847,17 +847,20 @@ function renderReviews() {
 
         // Check if there are before/after comparison files
         let audioHTML = '';
-        if (rev.beforeAudioBlob || rev.afterAudioBlob) {
+        const hasBefore = rev.beforeAudioData || rev.beforeAudioBlob;
+        const hasAfter = rev.afterAudioData || rev.afterAudioBlob;
+
+        if (hasBefore || hasAfter) {
             audioHTML = `
                 <div class="review-audio-comparison" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 8px;">
                     <span style="font-size: 11px; color: var(--color-text-muted); font-family: var(--font-mono);">Porównanie audio:</span>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        ${rev.beforeAudioBlob ? `
+                        ${hasBefore ? `
                             <button class="btn btn-secondary btn-small btn-play-review-audio" data-id="${rev.id}" data-type="before" style="font-size: 11px; padding: 6px 12px;">
                                 ▶ Przed miksem
                             </button>
                         ` : ''}
-                        ${rev.afterAudioBlob ? `
+                        ${hasAfter ? `
                             <button class="btn btn-primary btn-small btn-play-review-audio" data-id="${rev.id}" data-type="after" style="font-size: 11px; padding: 6px 12px; background: linear-gradient(135deg, var(--color-blue-dim) 0%, var(--color-blue-main) 100%);">
                                 ▶ Po miksie
                             </button>
@@ -1157,7 +1160,7 @@ async function handleVote(type, id, voteType) {
         if (item) {
             item.votesUp = Math.max(0, (item.votesUp || 0) + deltaUp);
             item.votesDown = Math.max(0, (item.votesDown || 0) + deltaDown);
-            localStorage.setItem('vertone_reviews', JSON.stringify(appState.reviews));
+            await saveToDB('reviews', item);
             renderReviews();
         }
     }
@@ -1868,8 +1871,8 @@ function openAdminModal() {
     const passInput = document.getElementById('admin-password-input');
     const errorDiv = document.getElementById('admin-login-error');
 
-    if (userInput && !userInput.value) userInput.value = 'The_vertis';
-    if (passInput && !passInput.value) passInput.value = 'Vertisvertone123!@#';
+    if (userInput) userInput.value = '';
+    if (passInput) passInput.value = '';
     if (errorDiv) errorDiv.classList.add('hidden');
     if (loginModal) loginModal.classList.add('show');
     if (userInput) setTimeout(() => userInput.focus(), 100);
@@ -1883,7 +1886,21 @@ function doAdminLogin(e) {
     const passInput = document.getElementById('admin-password-input');
     const errorDiv = document.getElementById('admin-login-error');
 
-    const username = (userInput && userInput.value) ? userInput.value.trim() : 'The_vertis';
+    const username = (userInput && userInput.value) ? userInput.value.trim() : '';
+    const password = (passInput && passInput.value) ? passInput.value : '';
+
+    const lowerUser = username.toLowerCase();
+    const isValidUser = lowerUser === 'the_vertis' || lowerUser === 'vertis';
+    const isValidPass = password === 'Vertisvertone123!@#';
+
+    if (!username || !password || !isValidUser || !isValidPass) {
+        if (errorDiv) {
+            errorDiv.textContent = "Nieprawidłowa nazwa użytkownika lub hasło!";
+            errorDiv.classList.remove('hidden');
+        }
+        return;
+    }
+
     const adminUser = { 
         id: 'admin_vertis', 
         username: username || 'The_vertis',
@@ -2196,6 +2213,7 @@ function setupFileDropzone(zoneId, inputId, statusId, nameId) {
     const zone = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
     const status = document.getElementById(statusId);
+    const nameEl = document.getElementById(nameId);
     if (!zone || !input) return;
 
     function updateDropzoneUI(file) {
@@ -2203,15 +2221,40 @@ function setupFileDropzone(zoneId, inputId, statusId, nameId) {
         const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
         const icon = isAudio ? '🎵' : '🖼️';
         const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        zone.innerHTML = `
-            <span class="upload-icon">${icon}</span>
-            <span class="upload-text" style="color: var(--color-blue-light); font-weight: 700; word-break: break-all; max-width: 90%; font-size: 13px;">${file.name}</span>
-            <span class="upload-sub" style="color: var(--color-success); font-weight: 600;">Wybrano plik (${sizeMB} MB) • Kliknij, aby zmienić</span>
-        `;
-        if (status) status.classList.add('hidden');
+
+        let iconEl = zone.querySelector('.upload-icon');
+        let textEl = zone.querySelector('.upload-text');
+        let subEl = zone.querySelector('.upload-sub');
+
+        if (iconEl) iconEl.textContent = icon;
+        if (textEl) {
+            textEl.textContent = file.name;
+            textEl.style.color = 'var(--color-blue-light)';
+            textEl.style.fontWeight = '700';
+            textEl.style.wordBreak = 'break-all';
+        }
+        if (subEl) {
+            subEl.textContent = `Wybrano plik (${sizeMB} MB) • Kliknij, aby zmienić`;
+            subEl.style.color = 'var(--color-success)';
+            subEl.style.fontWeight = '600';
+        } else {
+            subEl = document.createElement('span');
+            subEl.className = 'upload-sub';
+            subEl.style.color = 'var(--color-success)';
+            subEl.style.fontWeight = '600';
+            subEl.textContent = `Wybrano plik (${sizeMB} MB) • Kliknij, aby zmienić`;
+            zone.appendChild(subEl);
+        }
+
+        if (nameEl) nameEl.textContent = file.name;
+        if (status) status.classList.remove('hidden');
     }
 
-    zone.addEventListener('click', () => input.click());
+    zone.addEventListener('click', (e) => {
+        if (e.target !== input) {
+            input.click();
+        }
+    });
 
     zone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -2377,8 +2420,10 @@ function syncStars(rating) {
 }
 
 async function submitNewReview() {
-    const author = document.getElementById('review-author-input').value.trim();
-    const text = document.getElementById('review-content-input').value.trim();
+    const authorInput = document.getElementById('review-author-input');
+    const contentInput = document.getElementById('review-content-input');
+    const author = authorInput ? authorInput.value.trim() : '';
+    const text = contentInput ? contentInput.value.trim() : '';
 
     if (!author) {
         showCustomAlert(t('review_author_required') || "Wpisz swoje imię!");
@@ -2396,17 +2441,17 @@ async function submitNewReview() {
     const beforeInput = document.getElementById('review-before-input');
     const afterInput = document.getElementById('review-after-input');
 
-    const beforeFile = beforeInput.files.length > 0 ? beforeInput.files[0] : null;
-    const afterFile = afterInput.files.length > 0 ? afterInput.files[0] : null;
+    const beforeFile = beforeInput && beforeInput.files && beforeInput.files.length > 0 ? beforeInput.files[0] : null;
+    const afterFile = afterInput && afterInput.files && afterInput.files.length > 0 ? afterInput.files[0] : null;
 
     try {
-        const beforeData = await readFileAsArrayBuffer(beforeFile);
-        const afterData = await readFileAsArrayBuffer(afterFile);
+        const beforeData = beforeFile ? await readFileAsArrayBuffer(beforeFile) : null;
+        const afterData = afterFile ? await readFileAsArrayBuffer(afterFile) : null;
 
         const newReview = {
             id: 'rev_' + Date.now(),
             author: author,
-            rating: appReviewRating,
+            rating: appReviewRating || 5,
             text: text,
             votesUp: 0,
             votesDown: 0,
@@ -2419,11 +2464,18 @@ async function submitNewReview() {
 
         await saveToDB('reviews', newReview);
         closeModal('write-review-modal');
+
+        if (authorInput) authorInput.value = '';
+        if (contentInput) contentInput.value = '';
+        if (beforeInput) beforeInput.value = '';
+        if (afterInput) afterInput.value = '';
+
         await loadReviews();
         renderReviews();
+        showCustomAlert("Dziękujemy za opinię! Została opublikowana.");
     } catch (e) {
         console.error("Failed to save review:", e);
-        showCustomAlert("Błąd podczas zapisywania opinii!");
+        showCustomAlert("Błąd podczas zapisywania opinii w bazie danych!");
     }
 }
 
