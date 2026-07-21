@@ -2316,3 +2316,40 @@ body.light-theme .settings-modal-box {
     background: #f9f8f6;
     border: 1px solid rgba(37, 99, 235, 0.15);
 }
+
+/* --- POPRAWKA RESPONYWNOŚCI DLA MOBILES --- */
+/* --- POPRAWKA RESPONYWNOŚCI DLA MOBILES --- */
+@media (max-width: 768px) {
+    .app-layout {
+        flex-direction: column !important;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* --- POPRAWKA RESPONSYWNOŚCI DLA MOBILES --- */
+@media (max-width: 768px) {
+
+    .app-layout {
+        flex-direction: column !important;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .settings-modal-box {
+        width: 90% !important;
+        height: auto !important;
+    }
+
+    .settings-modal-sidebar {
+        width: 100% !important;
+        height: auto !important;
+        margin-bottom: 15px;
+    }
+}

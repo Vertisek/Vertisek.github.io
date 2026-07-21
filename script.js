@@ -2579,4 +2579,3 @@ function checkAdminRoute() {
 }
 
 window.addEventListener('hashchange', checkAdminRoute);
-window.addEventListener('popstate', checkAdminRoute);
