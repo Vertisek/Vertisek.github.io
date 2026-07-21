@@ -29,8 +29,8 @@
             </div>
             
             <div class="top-header-right" style="display: flex; align-items: center; gap: 15px;">
-                <!-- Admin Login Button -->
-                <button class="btn-discord-login" id="btn-discord-login" onclick="openAdminModal()" style="display: flex;">
+                <!-- Admin Login Button (Hidden by default) -->
+                <button class="btn-discord-login" id="btn-discord-login" onclick="openAdminModal()" style="display: none !important;">
                     <span style="font-size: 14px;">🔑</span>
                     <span data-i18n="btn_login">Zaloguj</span>
                 </button>
@@ -758,9 +758,9 @@
                         <div class="file-upload-zone" id="review-before-dropzone"
                             style="padding: 15px 10px; border-radius: 6px;">
                             <span class="upload-icon" style="font-size: 16px;">📁</span>
-                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
-                                kliknij</span>
-                            <input type="file" id="review-before-input" accept="audio/mp3, audio/wav, audio/x-wav"
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub kliknij</span>
+                            <span class="upload-sub" style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks. 15MB)</span>
+                            <input type="file" id="review-before-input" accept="audio/mp3, audio/mpeg, .mp3"
                                 style="display: none;">
                         </div>
                         <div id="review-before-status" class="file-status hidden"
@@ -772,9 +772,9 @@
                         <div class="file-upload-zone" id="review-after-dropzone"
                             style="padding: 15px 10px; border-radius: 6px;">
                             <span class="upload-icon" style="font-size: 16px;">📁</span>
-                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
-                                kliknij</span>
-                            <input type="file" id="review-after-input" accept="audio/mp3, audio/wav, audio/x-wav"
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub kliknij</span>
+                            <span class="upload-sub" style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks. 15MB)</span>
+                            <input type="file" id="review-after-input" accept="audio/mp3, audio/mpeg, .mp3"
                                 style="display: none;">
                         </div>
                         <div id="review-after-status" class="file-status hidden"

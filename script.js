@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     handleDiscordHashLogin();
+    checkAdminRoute();
 });
 
 // --- LOAD DATA ---
@@ -455,12 +456,12 @@ function renderTracks() {
                 <button class="btn-vote vote-down ${hasVoted === 'down' ? 'voted' : ''}" data-id="${track.id}">
                     👎 <span class="vote-count">${track.votesDown}</span>
                 </button>
-                <button class="btn-vote btn-feedback-toggle" data-id="${track.id}" data-type="track" title="${t('btn_feedback_tooltip') || 'Opinie i feedback'}">
+                <button class="btn-vote btn-feedback-toggle" data-id="${track.id}" data-type="track" title="${t('btn_feedback_tooltip') || 'Opinie i feedback'}" style="display: none !important;">
                     💬 <span class="feedback-count">${(track.feedbacks || []).length}</span>
                 </button>
                 ${appState.isOwner ? `<button class="btn btn-secondary btn-small btn-reset-votes" data-id="${track.id}" data-type="track" title="${t('btn_reset_votes_tooltip') || 'Resetuj oceny'}" style="margin-left: auto; padding: 4px 8px; font-size:11px;">🔄 ${t('btn_reset') || 'Reset'}</button>` : ''}
             </div>
-            <div class="feedback-toggle-container hidden" data-id="${track.id}">
+            <div class="feedback-toggle-container hidden" data-id="${track.id}" style="display: none !important;">
                 ${feedbackHTML}
             </div>
         `;
@@ -1241,8 +1242,8 @@ function updateUserUI() {
             ownerBanner.classList.add('hidden');
         }
         if (btnLogin) {
-            btnLogin.style.display = 'flex';
-            btnLogin.classList.remove('hidden');
+            btnLogin.style.display = 'none';
+            btnLogin.classList.add('hidden');
         }
         if (menuProfile) {
             menuProfile.style.display = 'none';
@@ -1901,10 +1902,10 @@ function doAdminLogin(e) {
         return;
     }
 
-    const adminUser = { 
-        id: 'admin_vertis', 
+    const adminUser = {
+        id: 'admin_vertis',
         username: username || 'The_vertis',
-        isOwner: true 
+        isOwner: true
     };
 
     localStorage.setItem('vertone_session_user', JSON.stringify(adminUser));
@@ -2216,8 +2217,27 @@ function setupFileDropzone(zoneId, inputId, statusId, nameId) {
     const nameEl = document.getElementById(nameId);
     if (!zone || !input) return;
 
+    function validateFile(file) {
+        if (!file) return false;
+        if (zoneId.includes('review') || inputId.includes('review')) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            const isMp3 = ext === 'mp3' || file.type === 'audio/mpeg' || file.type === 'audio/mp3';
+            if (!isMp3) {
+                showCustomAlert("W opiniach dozwolone są wyłącznie pliki w formacie MP3!");
+                input.value = '';
+                return false;
+            }
+            if (file.size > 15 * 1024 * 1024) {
+                showCustomAlert("Maksymalny rozmiar pliku w opiniach wynosi 15 MB!");
+                input.value = '';
+                return false;
+            }
+        }
+        return true;
+    }
+
     function updateDropzoneUI(file) {
-        if (!file) return;
+        if (!file || !validateFile(file)) return;
         const isAudio = file.type.startsWith('audio') || zoneId.includes('track') || zoneId.includes('review');
         const icon = isAudio ? '🎵' : '🖼️';
         const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
@@ -2444,6 +2464,32 @@ async function submitNewReview() {
     const beforeFile = beforeInput && beforeInput.files && beforeInput.files.length > 0 ? beforeInput.files[0] : null;
     const afterFile = afterInput && afterInput.files && afterInput.files.length > 0 ? afterInput.files[0] : null;
 
+    if (beforeFile) {
+        const ext = beforeFile.name.split('.').pop().toLowerCase();
+        const isMp3 = ext === 'mp3' || beforeFile.type === 'audio/mpeg' || beforeFile.type === 'audio/mp3';
+        if (!isMp3) {
+            showCustomAlert("Plik 'przed miksem' musi być w formacie MP3!");
+            return;
+        }
+        if (beforeFile.size > 15 * 1024 * 1024) {
+            showCustomAlert("Plik 'przed miksem' przekracza maksymalny limit 15 MB!");
+            return;
+        }
+    }
+
+    if (afterFile) {
+        const ext = afterFile.name.split('.').pop().toLowerCase();
+        const isMp3 = ext === 'mp3' || afterFile.type === 'audio/mpeg' || afterFile.type === 'audio/mp3';
+        if (!isMp3) {
+            showCustomAlert("Plik 'po miksie' musi być w formacie MP3!");
+            return;
+        }
+        if (afterFile.size > 15 * 1024 * 1024) {
+            showCustomAlert("Plik 'po miksie' przekracza maksymalny limit 15 MB!");
+            return;
+        }
+    }
+
     try {
         const beforeData = beforeFile ? await readFileAsArrayBuffer(beforeFile) : null;
         const afterData = afterFile ? await readFileAsArrayBuffer(afterFile) : null;
@@ -2515,3 +2561,22 @@ document.querySelectorAll('.avatar-preset-item').forEach(item => {
         item.classList.add('active');
     });
 });
+// Secret Admin Trigger: Keyboard shortcut (Ctrl + Shift + A) & /admin route listener
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
+        e.preventDefault();
+        openAdminModal();
+    }
+});
+
+function checkAdminRoute() {
+    const pathname = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    const search = window.location.search.toLowerCase();
+    if (pathname.endsWith('/admin') || pathname.endsWith('/admin/') || hash === '#admin' || hash === '#/admin' || search.includes('admin=true')) {
+        openAdminModal();
+    }
+}
+
+window.addEventListener('hashchange', checkAdminRoute);
+window.addEventListener('popstate', checkAdminRoute);
