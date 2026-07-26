@@ -5,6 +5,74 @@
 // --- Discord App Configuration ---
 const DISCORD_CLIENT_ID = '1526394545158230039'; // Default template Client ID
 const OWNER_DISCORD_IDS = ['490167888469295134', '111111111111111111']; // Vertis real ID & simulated ID
+const DISCORD_WEBHOOK_URL = ''; // Wklej swój webhook Discorda, aby otrzymywać powiadomienia o nowych opiniach!
+
+function sendDiscordWebhookNotification(title, description, fields = []) {
+    if (!DISCORD_WEBHOOK_URL) return;
+    try {
+        fetch(DISCORD_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                embeds: [{
+                    title: title,
+                    description: description,
+                    color: 0x3aa6ff,
+                    fields: fields,
+                    timestamp: new Date().toISOString()
+                }]
+            })
+        }).catch(err => console.error("Webhook notification error:", err));
+    } catch (e) {
+        console.error("Webhook error:", e);
+    }
+}
+
+// --- Cloud Database Sync Engine (Firebase / REST API) ---
+const CLOUD_DB_URL = ''; // Wklej URL Firebase Realtime DB, aby synchronizować opinie na żywo u wszystkich!
+
+async function fetchFromCloud(endpoint) {
+    if (!CLOUD_DB_URL) return null;
+    try {
+        const cleanUrl = CLOUD_DB_URL.replace(/\/$/, '');
+        const res = await fetch(`${cleanUrl}/${endpoint}.json`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!data) return [];
+        return Array.isArray(data) ? data : Object.values(data);
+    } catch (e) {
+        console.error(`Cloud fetch error for ${endpoint}:`, e);
+        return null;
+    }
+}
+
+async function saveToCloud(endpoint, item) {
+    if (!CLOUD_DB_URL) return false;
+    try {
+        const cleanUrl = CLOUD_DB_URL.replace(/\/$/, '');
+        await fetch(`${cleanUrl}/${endpoint}/${item.id || Date.now()}.json`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        });
+        return true;
+    } catch (e) {
+        console.error(`Cloud save error for ${endpoint}:`, e);
+        return false;
+    }
+}
+
+async function deleteFromCloud(endpoint, id) {
+    if (!CLOUD_DB_URL) return false;
+    try {
+        const cleanUrl = CLOUD_DB_URL.replace(/\/$/, '');
+        await fetch(`${cleanUrl}/${endpoint}/${id}.json`, { method: 'DELETE' });
+        return true;
+    } catch (e) {
+        console.error(`Cloud delete error for ${endpoint}:`, e);
+        return false;
+    }
+}
 
 // --- App State ---
 let appState = {
@@ -102,8 +170,8 @@ function deleteFromDB(storeName, id) {
 const DEFAULT_TRACKS = [
     {
         id: 'track_def_1',
-        title: 'Vertis - Cyber Beat v1 (Mix & Master)',
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        title: 'Gregorio x Brawer - Nie mam wolnej chwili MASTERED',
+        url: 'audio/gregorio_nie_mam_wolnej_chwili.mp3',
         votesUp: 0,
         votesDown: 0,
         feedbacks: [],
@@ -111,8 +179,35 @@ const DEFAULT_TRACKS = [
     },
     {
         id: 'track_def_2',
-        title: 'Vertis - Space Melodies (Mastering)',
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        title: 'Cuuyki - 9 żyć MASTERED',
+        url: 'audio/cuuyki_9_zyc.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_3',
+        title: 'Nastiaa - Zapomniana MASTERED',
+        url: 'audio/nastiaa_zapomniana.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_4',
+        title: 'Młody HNX - Lewa Prawa MASTERED',
+        url: 'audio/mlody_hnx_lewa_prawa.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_5',
+        title: 'Nastiaa - Ciche Kłamstwa MASTERED',
+        url: 'audio/nastiaa_ciche_klamstwa.mp3',
         votesUp: 0,
         votesDown: 0,
         feedbacks: [],
@@ -131,6 +226,7 @@ const DEFAULT_REVIEWS = [
         text: 'Kozak mix i master, wokal siedzi idealnie w bicie. Szybki kontakt i ekspresowa realizacja!',
         votesUp: 0,
         votesDown: 0,
+        feedbacks: [],
         avatar: 'user1'
     },
     {
@@ -140,6 +236,7 @@ const DEFAULT_REVIEWS = [
         text: 'Bannery i avatary wykonane z dbałością o każdy szczegół. Klimat techno oddany w stu procentach!',
         votesUp: 0,
         votesDown: 0,
+        feedbacks: [],
         avatar: 'user2'
     },
     {
@@ -149,6 +246,7 @@ const DEFAULT_REVIEWS = [
         text: 'Najlepszy mastering w tej cenie. Nielimitowane poprawki ratują życie, chociaż i tak pierwsza wersja była super.',
         votesUp: 0,
         votesDown: 0,
+        feedbacks: [],
         avatar: 'user3'
     }
 ];
@@ -173,10 +271,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 2. Async DB Init & Data Loading
     try {
-        if (localStorage.getItem('vertone_db_wiped_likes_v1') !== 'true') {
+        if (localStorage.getItem('vertone_db_wiped_likes_v3') !== 'true') {
             localStorage.clear();
             indexedDB.deleteDatabase(DB_NAME);
-            localStorage.setItem('vertone_db_wiped_likes_v1', 'true');
+            localStorage.setItem('vertone_db_wiped_likes_v3', 'true');
             window.location.reload();
             return;
         }
@@ -242,6 +340,18 @@ async function loadGraphics() {
 
 async function loadReviews() {
     let dbReviews = await getAllFromDB('reviews');
+
+    // Fetch live reviews from Cloud DB if configured
+    const cloudReviews = await fetchFromCloud('reviews');
+    if (cloudReviews && Array.isArray(cloudReviews) && cloudReviews.length > 0) {
+        for (const rev of cloudReviews) {
+            if (rev && rev.id) {
+                await saveToDB('reviews', rev);
+            }
+        }
+        dbReviews = await getAllFromDB('reviews');
+    }
+
     if (dbReviews.length === 0 && localStorage.getItem('vertone_reviews_initialized') !== 'true') {
         for (const rev of DEFAULT_REVIEWS) {
             await saveToDB('reviews', rev);
@@ -544,6 +654,10 @@ function renderTracks() {
                 if (!item.feedbacks) item.feedbacks = [];
                 item.feedbacks.push(val);
                 await saveToDB('tracks', item);
+                sendDiscordWebhookNotification(
+                    '💬 Nowy Feedback do Utworu!',
+                    `**Utwór:** ${item.title}\n**Treść feedbacku:** "${val}"`
+                );
                 textarea.value = '';
                 showCustomAlert(t('feedback_thanks') || "Dziękuję za Twój feedback! Został zapisany dla właściciela strony.");
                 await loadTracks();
@@ -902,6 +1016,7 @@ function renderReviews() {
                 const id = btn.getAttribute('data-id');
                 showCustomConfirm(t('confirm_delete_review') || "Czy na pewno usunąć tę opinię?", async () => {
                     await deleteFromDB('reviews', id);
+                    await deleteFromCloud('reviews', id);
                     await loadReviews();
                     renderReviews();
                 });
@@ -2509,6 +2624,15 @@ async function submitNewReview() {
         };
 
         await saveToDB('reviews', newReview);
+        await saveToCloud('reviews', newReview);
+        sendDiscordWebhookNotification(
+            '⭐ Nowa Opinia na stronie Vertone!',
+            `**Autor:** ${author}\n**Ocena:** ${'★'.repeat(newReview.rating)}\n**Treść opinii:** "${text}"`,
+            [
+                { name: 'Przed miksem Audio', value: beforeFile ? `Tak (${beforeFile.name})` : 'Brak', inline: true },
+                { name: 'Po miksie Audio', value: afterFile ? `Tak (${afterFile.name})` : 'Brak', inline: true }
+            ]
+        );
         closeModal('write-review-modal');
 
         if (authorInput) authorInput.value = '';
