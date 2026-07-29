@@ -73,7 +73,7 @@
                 </div>
 
                 <nav class="sidebar-tabs">
-                    <button class="tab-btn" data-target="tab-courses" style="display: none !important;">
+                    <button class="tab-btn active" data-target="tab-courses">
                         <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -81,7 +81,7 @@
                         </svg>
                         <span data-i18n="tab_courses">Kursy</span>
                     </button>
-                    <button class="tab-btn active" data-target="tab-portfolio">
+                    <button class="tab-btn" data-target="tab-portfolio">
                         <svg class="tab-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor"
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
@@ -137,7 +137,7 @@
             <main class="main-content">
 
                 <!-- TAB 1: KURSY (Transferred E-books tab from Mixly) -->
-                <section id="tab-courses" class="tab-content">
+                <section id="tab-courses" class="tab-content active">
                     <div class="content-header">
                         <h2 data-i18n="courses_title">Kursy i E-booki</h2>
                         <p class="subtitle" data-i18n="courses_subtitle">Dowiedz się wielu nowych rzeczy w muzyce i nie tylko dzięki naszym e-bookom!</p>
@@ -222,7 +222,7 @@
                 </section>
 
                 <!-- TAB 2: PORTFOLIO -->
-                <section id="tab-portfolio" class="tab-content active">
+                <section id="tab-portfolio" class="tab-content">
                     <!-- 1. MAIN DASHBOARD: Splits -->
                     <div id="portfolio-dashboard" class="portfolio-split-grid">
                         <!-- LEFT PANEL: MUSIC -->
@@ -910,8 +910,6 @@
         </div>
     </div>
 
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="script.js?v=20260719"></script>
 </body>
 
