@@ -92,8 +92,9 @@ async function deleteReviewFromSupabase(id) {
         console.error('Supabase delete review exception:', e);
         return false;
     }
+}
 
-    async function updateReviewVotesInSupabase(id, votesUp, votesDown) {
+async function updateReviewVotesInSupabase(id, votesUp, votesDown) {
         if (!supabase) return false;
         try {
             const { error } = await supabase
