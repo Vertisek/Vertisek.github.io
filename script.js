@@ -31,7 +31,7 @@ function sendDiscordWebhookNotification(title, description, fields = []) {
 // --- Supabase Configuration ---
 // WYPEŁNIJ: Wejdź na supabase.com → Twój projekt → Settings → API
 const SUPABASE_URL = 'https://qopruuhnrbvkjwineaig.supabase.co';          // np. https://abcxyz.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcHJ1dWhyYnZramdpbmVhaWciLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc1NDM4OTk3OSwiZXhwIjoyMDY5OTY1OTc5fQ.3k-wO1J0iGf56Qe-kC6-W92-N-w7-R6-R6-R6-R6-R6'; // długi string eyJ...
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcHJ1dWhucmJ2a2p3aW5lYWlnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTI0NjU4MCwiZXhwIjoyMTAwODIyNTgwfQ.R6q_5_6820oK2k4j5H7_w-j8w-4o7g2d8u1v1r2y7m8'; // długi string eyJ...
 
 // Klient Supabase (inicjalizowany po załadowaniu biblioteki CDN)
 let supabase = null;
@@ -3003,3 +3003,112 @@ async function updateReviewVotesInSupabase(id, votesUp, votesDown) {
             }
         }
     });
+
+// --- Supabase Opinie helper functions ---
+async function pobierzOpinie() {
+    if (!supabase) return;
+    const { data, error } = await supabase
+        .from('opinie')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Błąd pobierania:', error);
+        return;
+    }
+
+    wyswietlOpinie(data);
+}
+
+async function dodajOpinie(autor, tresc) {
+    if (!supabase) return;
+    if (!autor.trim() || !tresc.trim()) {
+        alert('Uzupełnij wszystkie pola przed wysłaniem!');
+        return;
+    }
+
+    const { data, error } = await supabase
+        .from('opinie')
+        .insert([{ autor: autor, tresc: tresc }]);
+
+    if (error) {
+        console.error('Błąd dodawania:', error);
+        alert('Nie udało się dodać opinii!');
+        return;
+    }
+
+    await pobierzOpinie();
+}
+
+async function edytujOpinie(id, nowaTresc) {
+    if (!supabase) return;
+    if (!nowaTresc.trim()) {
+        alert('Treść opinii nie może być pusta!');
+        return;
+    }
+
+    const { error } = await supabase
+        .from('opinie')
+        .update({ tresc: nowaTresc })
+        .eq('id', id);
+
+    if (error) {
+        console.error('Błąd edycji:', error);
+        alert('Nie udało się edytować opinii!');
+        return;
+    }
+
+    await pobierzOpinie();
+}
+
+async function usunOpinie(id) {
+    if (!supabase) return;
+    const { error } = await supabase
+        .from('opinie')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error('Błąd usuwania:', error);
+        alert('Nie udało się usunąć opinii!');
+        return;
+    }
+
+    await pobierzOpinie();
+}
+
+function wyswietlOpinie(opinie) {
+    const kontener = document.getElementById('opinie-kontener');
+    if (!kontener) return;
+    kontener.innerHTML = '';
+
+    (opinie || []).forEach(opinia => {
+        const opiniaElement = document.createElement('div');
+        opiniaElement.className = 'opinia';
+
+        opiniaElement.innerHTML = `
+      <p>${opinia.tresc}</p>
+      <p><strong>Autor:</strong> ${opinia.autor}</p>
+      
+      <button onclick="edytujOpinie(${opinia.id}, prompt('Edytuj treść opinii:'))">Edytuj</button>
+      <button onclick="usunOpinie(${opinia.id})">Usuń</button>
+    `;
+
+        kontener.appendChild(opiniaElement);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const mojFormularz = document.querySelector('#mojFormularz');
+    if (mojFormularz) {
+        mojFormularz.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const autorEl = document.querySelector('#inputAutor');
+            const trescEl = document.querySelector('#inputTresc');
+            const autor = autorEl ? autorEl.value : '';
+            const tresc = trescEl ? trescEl.value : '';
+
+            await dodajOpinie(autor, tresc);
+        });
+    }
+});
