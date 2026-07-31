@@ -301,44 +301,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // --- LOAD DATA ---
 async function loadTracks() {
+    let dbTracks = [];
     try {
-        let dbTracks = await getAllFromDB('tracks');
-        if (!dbTracks || dbTracks.length === 0) {
-            for (const track of DEFAULT_TRACKS) {
-                try {
-                    await saveToDB('tracks', track);
-                } catch (e) {
-                    console.error("Failed to save default track to DB:", e);
-                }
-            }
-            try {
-                dbTracks = await getAllFromDB('tracks');
-            } catch (e) {
-                dbTracks = [];
-            }
-        } else {
-            // Ensure any missing default tracks are added to DB
-            let hasNewDefaults = false;
-            for (const defTrack of DEFAULT_TRACKS) {
-                if (!dbTracks.some(t => t.id === defTrack.id)) {
-                    try {
-                        await saveToDB('tracks', defTrack);
-                        hasNewDefaults = true;
-                    } catch (e) {}
-                }
-            }
-            if (hasNewDefaults) {
-                try {
-                    dbTracks = await getAllFromDB('tracks');
-                } catch (e) {}
+        if (typeof getAllFromDB === 'function' && db) {
+            dbTracks = await getAllFromDB('tracks');
+        }
+    } catch (err) {
+        console.error("IndexedDB error loading tracks:", err);
+    }
+
+    // Always start with DEFAULT_TRACKS (isDefault: true)
+    const combinedTracks = [...DEFAULT_TRACKS];
+
+    // Merge any user-added custom tracks from DB
+    if (dbTracks && dbTracks.length > 0) {
+        for (const t of dbTracks) {
+            if (!combinedTracks.some(existing => existing.id === t.id)) {
+                combinedTracks.push(t);
             }
         }
-        
-        appState.tracks = (dbTracks && dbTracks.length > 0) ? dbTracks : [...DEFAULT_TRACKS];
-    } catch (err) {
-        console.error("Error loading tracks from IndexedDB:", err);
-        appState.tracks = [...DEFAULT_TRACKS];
     }
+
+    appState.tracks = combinedTracks;
 }
 
 async function loadGraphics() {
@@ -356,38 +340,61 @@ async function loadGraphics() {
             console.error("Error clearing graphics store:", e);
         }
     }
-    let dbGraphics = await getAllFromDB('graphics');
-    if (dbGraphics.length === 0 && DEFAULT_GRAPHICS.length > 0) {
-        for (const graph of DEFAULT_GRAPHICS) {
-            await saveToDB('graphics', graph);
+    let dbGraphics = [];
+    try {
+        if (typeof getAllFromDB === 'function' && db) {
+            dbGraphics = await getAllFromDB('graphics');
         }
-        dbGraphics = await getAllFromDB('graphics');
+    } catch (e) {}
+
+    const combinedGraphics = [...DEFAULT_GRAPHICS];
+    if (dbGraphics && dbGraphics.length > 0) {
+        for (const g of dbGraphics) {
+            if (!combinedGraphics.some(existing => existing.id === g.id)) {
+                combinedGraphics.push(g);
+            }
+        }
     }
-    appState.graphics = dbGraphics;
+
+    appState.graphics = combinedGraphics;
 }
 
 async function loadReviews() {
-    let dbReviews = await getAllFromDB('reviews');
+    let dbReviews = [];
+    try {
+        if (typeof getAllFromDB === 'function' && db) {
+            dbReviews = await getAllFromDB('reviews');
+        }
+    } catch (e) {
+        console.error("IndexedDB error in loadReviews:", e);
+    }
 
     // Fetch live reviews from Cloud DB if configured
     const cloudReviews = await fetchFromCloud('reviews');
     if (cloudReviews && Array.isArray(cloudReviews) && cloudReviews.length > 0) {
         for (const rev of cloudReviews) {
             if (rev && rev.id) {
-                await saveToDB('reviews', rev);
+                if (db) {
+                    try { await saveToDB('reviews', rev); } catch (e) {}
+                }
+                if (!dbReviews.some(r => r.id === rev.id)) {
+                    dbReviews.push(rev);
+                }
             }
         }
-        dbReviews = await getAllFromDB('reviews');
     }
 
-    if (dbReviews.length === 0 && localStorage.getItem('vertone_reviews_initialized') !== 'true') {
-        for (const rev of DEFAULT_REVIEWS) {
-            await saveToDB('reviews', rev);
+    // Always start with DEFAULT_REVIEWS so reviews show up for everyone
+    const combinedReviews = [...DEFAULT_REVIEWS];
+    if (dbReviews && dbReviews.length > 0) {
+        for (const rev of dbReviews) {
+            if (!combinedReviews.some(existing => existing.id === rev.id)) {
+                combinedReviews.push(rev);
+            }
         }
-        localStorage.setItem('vertone_reviews_initialized', 'true');
-        dbReviews = await getAllFromDB('reviews');
     }
-    appState.reviews = dbReviews;
+
+    appState.reviews = combinedReviews;
 }
 
 // --- TAB SWITCHING ---
