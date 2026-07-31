@@ -99,6 +99,23 @@ async function uploadAudioToSupabase(file, folderName) {
     return null;
 }
 
+function setupSupabaseRealtimeReviews() {
+    const client = getSupabaseClient();
+    if (!client) return;
+
+    try {
+        client
+            .channel('public:reviews')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' }, async () => {
+                await loadReviews();
+                renderReviews();
+            })
+            .subscribe();
+    } catch (e) {
+        console.error("Supabase Realtime subscription error:", e);
+    }
+}
+
 // --- Cloud Database Sync Engine (Firebase / REST API Fallback) ---
 const CLOUD_DB_URL = 'https://vertone-studio-default-rtdb.europe-west1.firebasedatabase.app';
 
@@ -362,6 +379,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTracks();
         renderGraphics();
         renderReviews();
+
+        setupSupabaseRealtimeReviews();
     } catch (err) {
         console.error("Async init error:", err);
     }
@@ -2773,10 +2792,7 @@ async function submitNewReview() {
         }
     }
 
-    showCustomAlert("Wysyłanie opinii do bazy Supabase... Proszę czekać.");
-
     try {
-        // Upload audio files to Supabase Storage bucket 'audio-reviews'
         let beforeUrl = null;
         let afterUrl = null;
 
@@ -2854,13 +2870,20 @@ async function submitNewReview() {
         if (beforeInput) beforeInput.value = '';
         if (afterInput) afterInput.value = '';
 
-        // Immediately fetch updated reviews from Supabase and render
+        const beforeStatus = document.getElementById('review-before-status');
+        const afterStatus = document.getElementById('review-after-status');
+        if (beforeStatus) beforeStatus.classList.add('hidden');
+        if (afterStatus) afterStatus.classList.add('hidden');
+
+        // Immediately fetch updated reviews from DB/Supabase and render list on page
         await loadReviews();
         renderReviews();
-        showCustomAlert("Dziękujemy za opinię! Została zapisana w Supabase i opublikowana.");
+
+        // Custom clean user-friendly alert
+        showCustomAlert("Twoja opinia została opublikowana", "Dziękujemy");
     } catch (e) {
         console.error("Failed to save review:", e);
-        showCustomAlert("Błąd podczas zapisywania opinii w bazie Supabase!");
+        showCustomAlert("Wystąpił błąd podczas wysyłania opinii. Spróbuj ponownie później.", "Błąd");
     }
 }
 
