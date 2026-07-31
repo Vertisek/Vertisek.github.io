@@ -61,39 +61,58 @@ async function fetchReviewsFromSupabase() {
 }
 
 async function uploadAudioToSupabase(file, folderName) {
+    if (!file) return null;
     const client = getSupabaseClient();
-    if (!client || !file) return null;
 
     const fileExt = file.name.split('.').pop().toLowerCase() || 'mp3';
     const fileName = `${folderName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
     const filePath = `${folderName}/${fileName}`;
 
-    // Try configured public buckets: 'audio-reviews' and fallback 'review-audio'
-    const bucketsToTry = ['audio-reviews', 'review-audio'];
+    // Bucket order: 'review-audio' first, then 'audio-reviews'
+    const bucketsToTry = ['review-audio', 'audio-reviews'];
 
     for (const bucketName of bucketsToTry) {
-        try {
-            const { data, error } = await client.storage
-                .from(bucketName)
-                .upload(filePath, file, {
-                    contentType: file.type || 'audio/mpeg',
-                    cacheControl: '3600',
-                    upsert: true
-                });
-
-            if (!error && data) {
-                const { data: publicUrlData } = client.storage
+        if (client && client.storage) {
+            try {
+                const { data, error } = await client.storage
                     .from(bucketName)
-                    .getPublicUrl(filePath);
+                    .upload(filePath, file, {
+                        contentType: file.type || 'audio/mpeg',
+                        cacheControl: '3600',
+                        upsert: true
+                    });
 
-                if (publicUrlData && publicUrlData.publicUrl) {
-                    return publicUrlData.publicUrl;
+                if (!error && data) {
+                    const { data: publicUrlData } = client.storage
+                        .from(bucketName)
+                        .getPublicUrl(filePath);
+
+                    if (publicUrlData && publicUrlData.publicUrl) {
+                        return publicUrlData.publicUrl;
+                    }
                 }
-            } else if (error) {
-                console.warn(`Supabase upload to bucket ${bucketName} failed:`, error.message);
+            } catch (e) {
+                console.error(`Supabase client upload exception for ${bucketName}:`, e);
             }
-        } catch (e) {
-            console.error(`Exception uploading to ${bucketName}:`, e);
+        }
+
+        // Direct REST upload fallback
+        try {
+            const restUploadUrl = `${SUPABASE_URL}/storage/v1/object/${bucketName}/${filePath}`;
+            const res = await fetch(restUploadUrl, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Content-Type': file.type || 'audio/mpeg'
+                },
+                body: file
+            });
+            if (res.ok) {
+                return `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${filePath}`;
+            }
+        } catch (err) {
+            console.error(`REST upload fallback error for ${bucketName}:`, err);
         }
     }
     return null;
@@ -466,11 +485,52 @@ async function loadGraphics() {
 }
 
 async function loadReviews() {
-    let supabaseReviews = await fetchReviewsFromSupabase();
-    let dbReviews = [];
+    let supabaseData = null;
 
-    if (supabaseReviews && Array.isArray(supabaseReviews) && supabaseReviews.length > 0) {
-        dbReviews = supabaseReviews.map(r => ({
+    // 1. Try Supabase Client SDK
+    const client = getSupabaseClient();
+    if (client) {
+        try {
+            const { data, error } = await client
+                .from('reviews')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (!error && Array.isArray(data)) {
+                supabaseData = data;
+            } else if (error) {
+                console.error("Supabase client select error:", error);
+            }
+        } catch (e) {
+            console.error("Supabase client select exception:", e);
+        }
+    }
+
+    // 2. Fallback to Supabase REST API
+    if (!supabaseData) {
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?select=*&order=created_at.desc`, {
+                method: 'GET',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    supabaseData = data;
+                }
+            }
+        } catch (e) {
+            console.error("Supabase REST select exception:", e);
+        }
+    }
+
+    let reviewsFromSupabase = [];
+    if (supabaseData && Array.isArray(supabaseData)) {
+        reviewsFromSupabase = supabaseData.map(r => ({
             id: r.id ? String(r.id) : ('rev_' + Date.now()),
             author: r.author || 'Anonim',
             rating: parseInt(r.rating) || 5,
@@ -484,42 +544,20 @@ async function loadReviews() {
             after_audio_url: r.after_audio_url || null,
             created_at: r.created_at
         }));
-    } else {
-        try {
-            if (typeof getAllFromDB === 'function' && db) {
-                dbReviews = await getAllFromDB('reviews');
-            }
-        } catch (e) {
-            console.error("IndexedDB error in loadReviews:", e);
-        }
-
-        const cloudReviews = await fetchFromCloud('reviews');
-        if (cloudReviews && Array.isArray(cloudReviews) && cloudReviews.length > 0) {
-            for (const rev of cloudReviews) {
-                if (rev && rev.id) {
-                    if (db) {
-                        try { await saveToDB('reviews', rev); } catch (e) {}
-                    }
-                    if (!dbReviews.some(r => String(r.id) === String(rev.id))) {
-                        dbReviews.push(rev);
-                    }
-                }
-            }
-        }
     }
 
     const deletedIds = getDeletedIds('vertone_deleted_reviews');
-    const combinedReviews = DEFAULT_REVIEWS.filter(r => !deletedIds.includes(String(r.id)));
+    let finalReviews = reviewsFromSupabase.filter(r => !deletedIds.includes(String(r.id)));
 
-    if (dbReviews && dbReviews.length > 0) {
-        for (const rev of dbReviews) {
-            if (!deletedIds.includes(String(rev.id)) && !combinedReviews.some(existing => String(existing.id) === String(rev.id))) {
-                combinedReviews.push(rev);
-            }
+    // Include default template entries that are not deleted
+    const defaultFiltered = DEFAULT_REVIEWS.filter(r => !deletedIds.includes(String(r.id)));
+    for (const defRev of defaultFiltered) {
+        if (!finalReviews.some(r => String(r.id) === String(defRev.id))) {
+            finalReviews.push(defRev);
         }
     }
 
-    appState.reviews = combinedReviews;
+    appState.reviews = finalReviews;
 }
 
 // --- TAB SWITCHING ---
@@ -2803,60 +2841,68 @@ async function submitNewReview() {
             afterUrl = await uploadAudioToSupabase(afterFile, 'after');
         }
 
-        const beforeData = beforeFile ? await readFileAsArrayBuffer(beforeFile) : null;
-        const afterData = afterFile ? await readFileAsArrayBuffer(afterFile) : null;
-
         const newReviewData = {
             author: author,
-            rating: appReviewRating || 5,
+            rating: parseInt(appReviewRating) || 5,
             text: text,
             avatar: avatar,
             votes_up: 0,
             votes_down: 0,
-            before_audio_url: beforeUrl,
-            after_audio_url: afterUrl
+            before_audio_url: beforeUrl || null,
+            after_audio_url: afterUrl || null
         };
 
+        let insertedReview = null;
+
+        // 1. Insert using Supabase Client SDK
         const client = getSupabaseClient();
-        let insertedId = null;
-
         if (client) {
-            const { data, error } = await client
-                .from('reviews')
-                .insert([newReviewData])
-                .select();
+            try {
+                const { data, error } = await client
+                    .from('reviews')
+                    .insert([newReviewData])
+                    .select();
 
-            if (error) {
-                console.error("Supabase insert review error:", error);
-            } else if (data && data[0]) {
-                insertedId = data[0].id;
+                if (error) {
+                    console.error("Supabase client insert error:", error);
+                } else if (data && data[0]) {
+                    insertedReview = data[0];
+                }
+            } catch (e) {
+                console.error("Supabase client insert exception:", e);
             }
         }
 
-        const localReview = {
-            id: insertedId ? String(insertedId) : ('rev_' + Date.now()),
-            author: author,
-            rating: appReviewRating || 5,
-            text: text,
-            avatar: avatar,
-            votesUp: 0,
-            votesDown: 0,
-            votes_up: 0,
-            votes_down: 0,
-            beforeAudioData: beforeData,
-            beforeFileType: beforeFile ? beforeFile.type : null,
-            afterAudioData: afterData,
-            afterFileType: afterFile ? afterFile.type : null,
-            before_audio_url: beforeUrl,
-            after_audio_url: afterUrl
-        };
-
-        await saveToDB('reviews', localReview);
-        await saveToCloud('reviews', localReview);
+        // 2. Direct REST API insert fallback
+        if (!insertedReview) {
+            try {
+                const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(newReviewData)
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data[0]) {
+                        insertedReview = data[0];
+                    }
+                } else {
+                    const errTxt = await res.text();
+                    console.error("Supabase REST insert error:", errTxt);
+                }
+            } catch (err) {
+                console.error("Supabase REST insert exception:", err);
+            }
+        }
 
         sendDiscordWebhookNotification(
             '⭐ Nowa Opinia na stronie Vertone!',
-            `**Autor:** ${author}\n**Ocena:** ${'★'.repeat(localReview.rating)}\n**Treść opinii:** "${text}"`,
+            `**Autor:** ${author}\n**Ocena:** ${'★'.repeat(newReviewData.rating)}\n**Treść opinii:** "${text}"`,
             [
                 { name: 'Przed miksem Audio', value: beforeUrl ? `[Odsłuchaj MP3](${beforeUrl})` : (beforeFile ? `Tak (${beforeFile.name})` : 'Brak'), inline: true },
                 { name: 'Po miksie Audio', value: afterUrl ? `[Odsłuchaj MP3](${afterUrl})` : (afterFile ? `Tak (${afterFile.name})` : 'Brak'), inline: true }
@@ -2875,11 +2921,11 @@ async function submitNewReview() {
         if (beforeStatus) beforeStatus.classList.add('hidden');
         if (afterStatus) afterStatus.classList.add('hidden');
 
-        // Immediately fetch updated reviews from DB/Supabase and render list on page
+        // Immediately fetch updated reviews from Supabase and render list
         await loadReviews();
         renderReviews();
 
-        // Custom clean user-friendly alert
+        // Success alert
         showCustomAlert("Twoja opinia została opublikowana", "Dziękujemy");
     } catch (e) {
         console.error("Failed to save review:", e);
