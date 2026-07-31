@@ -299,6 +299,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkAdminRoute();
 });
 
+// --- LOAD DATA HELPERS FOR DELETIONS ---
+function getDeletedIds(storageKey) {
+    try {
+        return JSON.parse(localStorage.getItem(storageKey) || '[]');
+    } catch(e) {
+        return [];
+    }
+}
+
+function markAsDeleted(storageKey, id) {
+    const deleted = getDeletedIds(storageKey);
+    if (!deleted.includes(id)) {
+        deleted.push(id);
+        localStorage.setItem(storageKey, JSON.stringify(deleted));
+    }
+}
+
 // --- LOAD DATA ---
 async function loadTracks() {
     let dbTracks = [];
@@ -310,13 +327,12 @@ async function loadTracks() {
         console.error("IndexedDB error loading tracks:", err);
     }
 
-    // Always start with DEFAULT_TRACKS (isDefault: true)
-    const combinedTracks = [...DEFAULT_TRACKS];
+    const deletedIds = getDeletedIds('vertone_deleted_tracks');
+    const combinedTracks = DEFAULT_TRACKS.filter(t => !deletedIds.includes(t.id));
 
-    // Merge any user-added custom tracks from DB
     if (dbTracks && dbTracks.length > 0) {
         for (const t of dbTracks) {
-            if (!combinedTracks.some(existing => existing.id === t.id)) {
+            if (!deletedIds.includes(t.id) && !combinedTracks.some(existing => existing.id === t.id)) {
                 combinedTracks.push(t);
             }
         }
@@ -384,11 +400,12 @@ async function loadReviews() {
         }
     }
 
-    // Always start with DEFAULT_REVIEWS so reviews show up for everyone
-    const combinedReviews = [...DEFAULT_REVIEWS];
+    const deletedIds = getDeletedIds('vertone_deleted_reviews');
+    const combinedReviews = DEFAULT_REVIEWS.filter(r => !deletedIds.includes(r.id));
+
     if (dbReviews && dbReviews.length > 0) {
         for (const rev of dbReviews) {
-            if (!combinedReviews.some(existing => existing.id === rev.id)) {
+            if (!deletedIds.includes(rev.id) && !combinedReviews.some(existing => existing.id === rev.id)) {
                 combinedReviews.push(rev);
             }
         }
@@ -623,6 +640,7 @@ function renderTracks() {
                     if (appState.currentPlayingId === id) {
                         pauseGlobalAudio();
                     }
+                    markAsDeleted('vertone_deleted_tracks', id);
                     await deleteFromDB('tracks', id);
                     await loadTracks();
                     renderTracks();
@@ -1050,6 +1068,7 @@ function renderReviews() {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
                 showCustomConfirm(t('confirm_delete_review') || "Czy na pewno usunąć tę opinię?", async () => {
+                    markAsDeleted('vertone_deleted_reviews', id);
                     await deleteFromDB('reviews', id);
                     await deleteFromCloud('reviews', id);
                     await loadReviews();
