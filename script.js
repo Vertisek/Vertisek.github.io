@@ -264,7 +264,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupLightbox();
     setupSettingsModal();
     setupDiscordLogin();
-    setupMobileMenu();
 
     // Update UI immediately based on active session
     updateUserUI();
@@ -396,38 +395,6 @@ async function loadReviews() {
     }
 
     appState.reviews = combinedReviews;
-}
-
-// --- MOBILE MENU SYSTEM ---
-function setupMobileMenu() {
-    const btnMobile = document.getElementById('btn-mobile-menu');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('mobile-nav-overlay');
-
-    if (btnMobile && sidebar) {
-        btnMobile.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('open');
-            if (overlay) overlay.classList.toggle('open');
-        });
-    }
-
-    if (overlay) {
-        overlay.addEventListener('click', () => {
-            if (sidebar) sidebar.classList.remove('open');
-            overlay.classList.remove('open');
-        });
-    }
-
-    // Auto-close menu when clicking any sidebar tab on mobile
-    document.querySelectorAll('.sidebar-tabs .tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                if (sidebar) sidebar.classList.remove('open');
-                if (overlay) overlay.classList.remove('open');
-            }
-        });
-    });
 }
 
 // --- TAB SWITCHING ---
