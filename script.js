@@ -5,7 +5,7 @@
 // --- Discord App Configuration ---
 const DISCORD_CLIENT_ID = '1526394545158230039'; // Default template Client ID
 const OWNER_DISCORD_IDS = ['490167888469295134', '111111111111111111']; // Vertis real ID & simulated ID
-const DISCORD_WEBHOOK_URL = ''; // Wklej swój webhook Discorda, aby otrzymywać powiadomienia o nowych opiniach!
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1386159446786988052/B-r2o-6-s1uY91Gq-e-n44iF8i1e0Wj3y95uR2McdT5XwI721M7T1v4bM00y4gW8-H9G'; // Wklej swój webhook Discorda, aby otrzymywać powiadomienia o nowych opiniach!
 
 function sendDiscordWebhookNotification(title, description, fields = []) {
     if (!DISCORD_WEBHOOK_URL) return;
@@ -29,7 +29,7 @@ function sendDiscordWebhookNotification(title, description, fields = []) {
 }
 
 // --- Cloud Database Sync Engine (Firebase / REST API) ---
-const CLOUD_DB_URL = ''; // Wklej URL Firebase Realtime DB, aby synchronizować opinie na żywo u wszystkich!
+const CLOUD_DB_URL = 'https://vertone-studio-default-rtdb.europe-west1.firebasedatabase.app'; // Wklej URL Firebase Realtime DB, aby synchronizować opinie na żywo u wszystkich!
 
 async function fetchFromCloud(endpoint) {
     if (!CLOUD_DB_URL) return null;
@@ -74,14 +74,98 @@ async function deleteFromCloud(endpoint, id) {
     }
 }
 
+// --- Pre-populate Data ---
+const DEFAULT_TRACKS = [
+    {
+        id: 'track_def_1',
+        title: 'Gregorio x Brawer - Nie mam wolnej chwili MASTERED',
+        url: 'audio/gregorio_nie_mam_wolnej_chwili.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_2',
+        title: 'Cuuyki - 9 żyć MASTERED',
+        url: 'audio/cuuyki_9_zyc.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_3',
+        title: 'Nastiaa - Zapomniana MASTERED',
+        url: 'audio/nastiaa_zapomniana.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_4',
+        title: 'Młody HNX - Lewa Prawa MASTERED',
+        url: 'audio/mlody_hnx_lewa_prawa.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    },
+    {
+        id: 'track_def_5',
+        title: 'Nastiaa - Ciche Kłamstwa MASTERED',
+        url: 'audio/nastiaa_ciche_klamstwa.mp3',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        isDefault: true
+    }
+];
+
+const DEFAULT_GRAPHICS = [];
+
+const DEFAULT_REVIEWS = [
+    {
+        id: 'rev_def_1',
+        author: 'Michał',
+        rating: 5,
+        text: 'Kozak mix i master, wokal siedzi idealnie w bicie. Szybki kontakt i ekspresowa realizacja!',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        avatar: 'user1'
+    },
+    {
+        id: 'rev_def_2',
+        author: 'Karolina',
+        rating: 5,
+        text: 'Bannery i avatary wykonane z dbałością o każdy szczegół. Klimat techno oddany w stu procentach!',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        avatar: 'user2'
+    },
+    {
+        id: 'rev_def_3',
+        author: 'Adrian',
+        rating: 5,
+        text: 'Najlepszy mastering w tej cenie. Nielimitowane poprawki ratują życie, chociaż i tak pierwsza wersja była super.',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: [],
+        avatar: 'user3'
+    }
+];
+
 // --- App State ---
 let appState = {
     isOwner: false, // Set dynamically on load based on user role
     activeTab: 'courses',
     activeCategory: 'bannery',
-    tracks: [],
-    graphics: [],
-    reviews: [],
+    tracks: [...DEFAULT_TRACKS],
+    graphics: [...DEFAULT_GRAPHICS],
+    reviews: [...DEFAULT_REVIEWS],
     currentPlayingId: null,
     globalVolume: 0.8,
     isMuted: false,
@@ -166,91 +250,6 @@ function deleteFromDB(storeName, id) {
     });
 }
 
-// --- Pre-populate Data ---
-const DEFAULT_TRACKS = [
-    {
-        id: 'track_def_1',
-        title: 'Gregorio x Brawer - Nie mam wolnej chwili MASTERED',
-        url: 'audio/gregorio_nie_mam_wolnej_chwili.mp3',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        isDefault: true
-    },
-    {
-        id: 'track_def_2',
-        title: 'Cuuyki - 9 żyć MASTERED',
-        url: 'audio/cuuyki_9_zyc.mp3',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        isDefault: true
-    },
-    {
-        id: 'track_def_3',
-        title: 'Nastiaa - Zapomniana MASTERED',
-        url: 'audio/nastiaa_zapomniana.mp3',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        isDefault: true
-    },
-    {
-        id: 'track_def_4',
-        title: 'Młody HNX - Lewa Prawa MASTERED',
-        url: 'audio/mlody_hnx_lewa_prawa.mp3',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        isDefault: true
-    },
-    {
-        id: 'track_def_5',
-        title: 'Nastiaa - Ciche Kłamstwa MASTERED',
-        url: 'audio/nastiaa_ciche_klamstwa.mp3',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        isDefault: true
-    }
-];
-
-const DEFAULT_GRAPHICS = [];
-
-
-const DEFAULT_REVIEWS = [
-    {
-        id: 'rev_def_1',
-        author: 'Michał',
-        rating: 5,
-        text: 'Kozak mix i master, wokal siedzi idealnie w bicie. Szybki kontakt i ekspresowa realizacja!',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        avatar: 'user1'
-    },
-    {
-        id: 'rev_def_2',
-        author: 'Karolina',
-        rating: 5,
-        text: 'Bannery i avatary wykonane z dbałością o każdy szczegół. Klimat techno oddany w stu procentach!',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        avatar: 'user2'
-    },
-    {
-        id: 'rev_def_3',
-        author: 'Adrian',
-        rating: 5,
-        text: 'Najlepszy mastering w tej cenie. Nielimitowane poprawki ratują życie, chociaż i tak pierwsza wersja była super.',
-        votesUp: 0,
-        votesDown: 0,
-        feedbacks: [],
-        avatar: 'user3'
-    }
-];
-
 // --- App Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
     // 1. Sync Init: Load user session & setup all event listeners IMMEDIATELY
@@ -302,15 +301,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // --- LOAD DATA ---
 async function loadTracks() {
-    let dbTracks = await getAllFromDB('tracks');
-    if (dbTracks.length === 0 && localStorage.getItem('vertone_tracks_initialized') !== 'true') {
-        for (const track of DEFAULT_TRACKS) {
-            await saveToDB('tracks', track);
+    try {
+        let dbTracks = await getAllFromDB('tracks');
+        if (!dbTracks || dbTracks.length === 0) {
+            for (const track of DEFAULT_TRACKS) {
+                try {
+                    await saveToDB('tracks', track);
+                } catch (e) {
+                    console.error("Failed to save default track to DB:", e);
+                }
+            }
+            try {
+                dbTracks = await getAllFromDB('tracks');
+            } catch (e) {
+                dbTracks = [];
+            }
+        } else {
+            // Ensure any missing default tracks are added to DB
+            let hasNewDefaults = false;
+            for (const defTrack of DEFAULT_TRACKS) {
+                if (!dbTracks.some(t => t.id === defTrack.id)) {
+                    try {
+                        await saveToDB('tracks', defTrack);
+                        hasNewDefaults = true;
+                    } catch (e) {}
+                }
+            }
+            if (hasNewDefaults) {
+                try {
+                    dbTracks = await getAllFromDB('tracks');
+                } catch (e) {}
+            }
         }
-        localStorage.setItem('vertone_tracks_initialized', 'true');
-        dbTracks = await getAllFromDB('tracks');
+        
+        appState.tracks = (dbTracks && dbTracks.length > 0) ? dbTracks : [...DEFAULT_TRACKS];
+    } catch (err) {
+        console.error("Error loading tracks from IndexedDB:", err);
+        appState.tracks = [...DEFAULT_TRACKS];
     }
-    appState.tracks = dbTracks;
 }
 
 async function loadGraphics() {
