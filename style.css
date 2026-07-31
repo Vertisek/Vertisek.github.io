@@ -2320,28 +2320,36 @@ body.light-theme .settings-modal-box {
 /* ==========================================================================
    HAMBURGER MENU & MOBILE NAV OVERLAY BASE
    ========================================================================== */
+.top-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .btn-hamburger {
     display: none;
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--color-text-primary);
     cursor: pointer;
-    padding: 6px;
-    border-radius: 6px;
+    padding: 8px;
+    border-radius: 8px;
     transition: var(--transition);
     align-items: center;
     justify-content: center;
+    height: 38px;
+    width: 38px;
 }
 
 .btn-hamburger:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--color-blue-light);
+    border-color: rgba(255, 255, 255, 0.15);
 }
 
 .logo-mobile-header {
     display: none;
     align-items: center;
-    margin-left: 8px;
 }
 
 .mobile-nav-overlay {
@@ -2381,14 +2389,44 @@ body.light-theme .settings-modal-box {
 
     .top-header {
         padding: 0 16px !important;
+        height: 60px !important;
+    }
+
+    .top-header-left {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 12px !important;
     }
 
     .btn-hamburger {
-        display: flex !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .logo-mobile-header {
-        display: flex !important;
+        display: inline-flex !important;
+        align-items: center !important;
+    }
+
+    /* Hide all admin login buttons, profile dropdowns & admin actions on mobile */
+    .btn-discord-login,
+    #btn-discord-login,
+    .user-profile-btn,
+    #user-profile-menu,
+    .owner-banner,
+    #owner-mode-banner,
+    #music-admin-actions,
+    #graphics-admin-actions,
+    #graphics-categories-admin-actions,
+    .btn-delete-track-absolute,
+    .btn-delete-review-absolute,
+    .btn-delete-comment,
+    .btn-reset-votes,
+    .graphic-reviews-report,
+    .report-title-admin {
+        display: none !important;
     }
 
     .app-layout {
