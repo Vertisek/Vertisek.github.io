@@ -26,10 +26,11 @@
         <header class="top-header">
             <div class="top-header-left">
             </div>
-            
+
             <div class="top-header-right" style="display: flex; align-items: center; gap: 15px;">
                 <!-- Admin Login Button (Hidden by default) -->
-                <button class="btn-discord-login" id="btn-discord-login" onclick="openAdminModal()" style="display: none !important;">
+                <button class="btn-discord-login" id="btn-discord-login" onclick="openAdminModal()"
+                    style="display: none !important;">
                     <span style="font-size: 14px;">🔑</span>
                     <span data-i18n="btn_login">Zaloguj</span>
                 </button>
@@ -38,13 +39,15 @@
                 <div class="user-profile-btn hidden" id="user-profile-menu">
                     <div class="user-avatar-wrapper">
                         <span id="user-avatar-emoji">👤</span>
-                        <img id="user-avatar-img" src="" alt="Avatar" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                        <img id="user-avatar-img" src="" alt="Avatar"
+                            style="display: none; width: 100%; height: 100%; object-fit: cover;">
                     </div>
                     <span id="user-name">--</span>
-                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; margin-left: 2px;">
+                    <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7; margin-left: 2px;">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
-                    
+
                     <!-- Dropdown Panel -->
                     <div class="user-profile-dropdown hidden" id="user-profile-dropdown">
                         <button class="dropdown-item" id="btn-discord-logout" onclick="doAdminLogout()">
@@ -54,9 +57,12 @@
                 </div>
 
                 <button class="btn-settings" id="btn-open-settings" title="Ustawienia">
-                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
                     </svg>
                 </button>
             </div>
@@ -127,7 +133,8 @@
                             stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
-                        <span style="line-height: 1.2;" data-i18n="tab_privacy">Polityka prywatności<br>i regulamin</span>
+                        <span style="line-height: 1.2;" data-i18n="tab_privacy">Polityka prywatności<br>i
+                            regulamin</span>
                     </button>
                 </nav>
             </aside>
@@ -139,7 +146,8 @@
                 <section id="tab-courses" class="tab-content">
                     <div class="content-header">
                         <h2 data-i18n="courses_title">Kursy i E-booki</h2>
-                        <p class="subtitle" data-i18n="courses_subtitle">Dowiedz się wielu nowych rzeczy w muzyce i nie tylko dzięki naszym e-bookom!</p>
+                        <p class="subtitle" data-i18n="courses_subtitle">Dowiedz się wielu nowych rzeczy w muzyce i nie
+                            tylko dzięki naszym e-bookom!</p>
                     </div>
 
                     <div class="grid-layout col-2" style="margin-top: 20px; align-items: stretch;">
@@ -153,31 +161,48 @@
                                             class="ebook-img">
                                     </div>
                                     <div>
-                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;" data-i18n="course_1_title">Pełny kurs Mixu i masteru</h3>
-                                        <span style="font-size: 11px; color: var(--color-blue-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="course_1_learn">Z tego kursu dowiesz się:</span>
+                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;"
+                                            data-i18n="course_1_title">Pełny kurs Mixu i masteru</h3>
+                                        <span
+                                            style="font-size: 11px; color: var(--color-blue-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
+                                            data-i18n="course_1_learn">Z tego kursu dowiesz się:</span>
                                     </div>
                                 </div>
 
                                 <div style="margin-bottom: 24px;">
                                     <ul class="bullet-list">
-                                        <li><span>●</span> <span data-i18n="c1_b1">Czym tak naprawdę jest Mix/mastering i z czego sie składa</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b1">Czym tak naprawdę jest Mix/mastering
+                                                i z czego sie składa</span></li>
                                         <li><span>●</span> <span data-i18n="c1_b2">Jakie są rodzaje wtyczek</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b3">Jakie są rodzaje kompresorów</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b4">Jak działają wtyczki m.in:</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b3">Jakie są rodzaje kompresorów</span>
+                                        </li>
+                                        <li><span>●</span> <span data-i18n="c1_b4">Jak działają wtyczki m.in:</span>
+                                        </li>
                                         <li class="nested-li"><span>〕</span> <span data-i18n="c1_b5">EQ</span></li>
-                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b6">Kompresory</span></li>
-                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b7">Saturatory/Distortion</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b6">Kompresory</span>
+                                        </li>
+                                        <li class="nested-li"><span>〕</span> <span
+                                                data-i18n="c1_b7">Saturatory/Distortion</span></li>
                                         <li class="nested-li"><span>〕</span> <span data-i18n="c1_b8">Pogłosy</span></li>
                                         <li class="nested-li"><span>〕</span> <span data-i18n="c1_b9">Delay'e</span></li>
-                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b10">De-essery</span></li>
-                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b11">Limitery/Bramki szumów</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b12">Jaki DAW najlepiej wybrać pod twoje preferencje</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b13">Jak dobrze nagrać wokal w domowych warunkach</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b14">Czym jest gain staging i jak go zrobić oraz jak zrobić leveling</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b15">Jak używać autotune i jak nastroić wokal</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b16">Routing & Side chainy - co to i jak zrobić</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b17">Zakresy częstotliwości, tonacje</span></li>
-                                        <li><span>●</span> <span data-i18n="c1_b18">Jak działają pokrętła na wtyczkach oraz opcje + filmy z tym związane</span></li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b10">De-essery</span>
+                                        </li>
+                                        <li class="nested-li"><span>〕</span> <span data-i18n="c1_b11">Limitery/Bramki
+                                                szumów</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b12">Jaki DAW najlepiej wybrać pod twoje
+                                                preferencje</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b13">Jak dobrze nagrać wokal w domowych
+                                                warunkach</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b14">Czym jest gain staging i jak go
+                                                zrobić oraz jak zrobić leveling</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b15">Jak używać autotune i jak nastroić
+                                                wokal</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b16">Routing & Side chainy - co to i jak
+                                                zrobić</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b17">Zakresy częstotliwości,
+                                                tonacje</span></li>
+                                        <li><span>●</span> <span data-i18n="c1_b18">Jak działają pokrętła na wtyczkach
+                                                oraz opcje + filmy z tym związane</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -197,18 +222,25 @@
                                             class="ebook-img">
                                     </div>
                                     <div>
-                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;" data-i18n="course_2_title">Pełny kurs akustyki</h3>
-                                        <span style="font-size: 11px; color: var(--color-purple-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;" data-i18n="course_2_learn">Z tego kursu dowiesz się:</span>
+                                        <h3 style="font-size: 17px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 6px;"
+                                            data-i18n="course_2_title">Pełny kurs akustyki</h3>
+                                        <span
+                                            style="font-size: 11px; color: var(--color-purple-light); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"
+                                            data-i18n="course_2_learn">Z tego kursu dowiesz się:</span>
                                     </div>
                                 </div>
 
                                 <div style="margin-bottom: 24px;">
                                     <ul class="bullet-list purple-bullets">
-                                        <li><span>●</span> <span data-i18n="c2_b1">Czym jest akustyka w pomieszczeniu</span></li>
-                                        <li><span>●</span> <span data-i18n="c2_b2">Jak dobrać akustykę do swojego pomieszczenia</span></li>
-                                        <li><span>●</span> <span data-i18n="c2_b3">Jak rozmieścić panele, bass-trapy itp. w swoim studio</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b1">Czym jest akustyka w
+                                                pomieszczeniu</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b2">Jak dobrać akustykę do swojego
+                                                pomieszczenia</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b3">Jak rozmieścić panele, bass-trapy
+                                                itp. w swoim studio</span></li>
                                         <li><span>●</span> <span data-i18n="c2_b4">DIY budżetowa akustyka</span></li>
-                                        <li><span>●</span> <span data-i18n="c2_b5">Czego unikać i na co uważać podczas planowania i tworzenia studia</span></li>
+                                        <li><span>●</span> <span data-i18n="c2_b5">Czego unikać i na co uważać podczas
+                                                planowania i tworzenia studia</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -417,11 +449,13 @@
 
                                 <div class="warning-alert" style="margin-top: 20px;">
                                     <strong>Uwaga!</strong>
-                                    W przypadku słabej jakości nagrania mam prawo odmówić ci usługi. Zależy mi na twoim zadowoleniu, a sam mix nie uratuje słabego nagrania.
+                                    W przypadku słabej jakości nagrania mam prawo odmówić ci usługi. Zależy mi na twoim
+                                    zadowoleniu, a sam mix nie uratuje słabego nagrania.
                                 </div>
 
                                 <p class="service-footer-note" style="margin-top: 20px;">
-                                    Jeśli chcesz przesłuchać zmixowane przeze mnie utwory, wejdź w zakładkę portfolio. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+                                    Jeśli chcesz przesłuchać zmixowane przeze mnie utwory, wejdź w zakładkę portfolio.
+                                    Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
                                 </p>
                             </div>
                             <div class="service-action-bar" style="margin-top: auto; padding-top: 20px;">
@@ -477,7 +511,9 @@
                                 </div>
 
                                 <p class="service-footer-note" style="margin-top: 20px;">
-                                    Jeśli chcesz zobaczyć prace które zrobiłem, wejdź w zakładkę portfolio i zobacz to co cię interesuje. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w przycisk poniżej.
+                                    Jeśli chcesz zobaczyć prace które zrobiłem, wejdź w zakładkę portfolio i zobacz to
+                                    co cię interesuje. Jeżeli zaś zdecydowałeś/aś się na zakup usługi to kliknij w
+                                    przycisk poniżej.
                                 </p>
                             </div>
                             <div class="service-action-bar" style="margin-top: auto; padding-top: 20px;">
@@ -685,7 +721,8 @@
 
             <div class="modal-form-group">
                 <label for="graphic-category-select">Kategoria grafiki:</label>
-                <select id="graphic-category-select" class="select-dark" style="width: 100%; padding: 10px 14px; border-radius: 8px;">
+                <select id="graphic-category-select" class="select-dark"
+                    style="width: 100%; padding: 10px 14px; border-radius: 8px;">
                     <option value="bannery">Bannery</option>
                     <option value="avatory">Avatary</option>
                     <option value="plakaty">Plakaty</option>
@@ -757,8 +794,11 @@
                         <div class="file-upload-zone" id="review-before-dropzone"
                             style="padding: 15px 10px; border-radius: 6px;">
                             <span class="upload-icon" style="font-size: 16px;">📁</span>
-                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub kliknij</span>
-                            <span class="upload-sub" style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks. 15MB)</span>
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
+                                kliknij</span>
+                            <span class="upload-sub"
+                                style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks.
+                                15MB)</span>
                             <input type="file" id="review-before-input" accept="audio/mp3, audio/mpeg, .mp3"
                                 style="display: none;">
                         </div>
@@ -771,8 +811,11 @@
                         <div class="file-upload-zone" id="review-after-dropzone"
                             style="padding: 15px 10px; border-radius: 6px;">
                             <span class="upload-icon" style="font-size: 16px;">📁</span>
-                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub kliknij</span>
-                            <span class="upload-sub" style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks. 15MB)</span>
+                            <span class="upload-text" style="font-size: 11px; font-weight: 500;">Przeciągnij lub
+                                kliknij</span>
+                            <span class="upload-sub"
+                                style="font-size: 10px; opacity: 0.7; display: block; margin-top: 2px;">MP3 (Maks.
+                                15MB)</span>
                             <input type="file" id="review-after-input" accept="audio/mp3, audio/mpeg, .mp3"
                                 style="display: none;">
                         </div>
@@ -811,7 +854,8 @@
     <div id="settings-modal" class="settings-modal-overlay">
         <div class="settings-modal-box glass highlight-blue">
             <button class="settings-close-btn" id="btn-close-settings" title="Zamknij">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -821,7 +865,8 @@
                     <span>⚙️</span>
                     <span data-i18n="settings_general">Ogólne</span>
                 </button>
-                <button class="settings-tab-btn" data-settings-tab="audio" style="opacity: 0.5; pointer-events: none; display: none;">
+                <button class="settings-tab-btn" data-settings-tab="audio"
+                    style="opacity: 0.5; pointer-events: none; display: none;">
                     <span>🔊</span>
                     <span data-i18n="settings_audio">Audio (Wkrótce)</span>
                 </button>
@@ -829,21 +874,30 @@
             <div class="settings-modal-content">
                 <!-- Tab: General -->
                 <div class="settings-tab-content active" id="settings-pane-general">
-                    <h3 data-i18n="settings_title" style="margin-top: 0; margin-bottom: 20px; font-family: var(--font-tech); color: var(--color-blue-light); letter-spacing: 0.05em; text-transform: uppercase; font-size: 16px;">Ustawienia ogólne</h3>
-                    
-                    <div class="setting-item" style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
-                        <span data-i18n="settings_select_lang" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz język strony</span>
-                        <select id="settings-lang-select" class="select-dark" style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
+                    <h3 data-i18n="settings_title"
+                        style="margin-top: 0; margin-bottom: 20px; font-family: var(--font-tech); color: var(--color-blue-light); letter-spacing: 0.05em; text-transform: uppercase; font-size: 16px;">
+                        Ustawienia ogólne</h3>
+
+                    <div class="setting-item"
+                        style="margin-bottom: 24px; display: flex; flex-direction: column; gap: 8px;">
+                        <span data-i18n="settings_select_lang"
+                            style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz język
+                            strony</span>
+                        <select id="settings-lang-select" class="select-dark"
+                            style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
                             <option value="pl">Polski</option>
                             <option value="en">English (Angielski)</option>
                             <option value="fr">Français (Francuski)</option>
                             <option value="ru">Русский (Rosyjski)</option>
                         </select>
                     </div>
-                    
+
                     <div class="setting-item" style="display: flex; flex-direction: column; gap: 8px;">
-                        <span data-i18n="settings_theme" style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz motyw strony</span>
-                        <select id="settings-theme-select" class="select-dark" style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
+                        <span data-i18n="settings_theme"
+                            style="font-size: 13px; color: var(--color-text-muted); font-weight: 500;">Wybierz motyw
+                            strony</span>
+                        <select id="settings-theme-select" class="select-dark"
+                            style="width: 100%; max-width: 300px; padding: 8px 12px; font-size: 13px;">
                             <option value="dark" data-i18n="settings_theme_dark">Ciemny</option>
                             <option value="light" data-i18n="settings_theme_light">Jasny</option>
                         </select>
@@ -856,29 +910,40 @@
     <!-- Admin Login Modal -->
     <div id="discord-login-modal" class="modal-overlay">
         <div class="modal-box glass highlight-blue" style="max-width: 400px; padding: 30px;">
-            <button class="modal-close-btn" id="btn-close-discord-login" title="Zamknij" style="background:none; border:none; cursor:pointer; color:var(--color-text-dim); position:absolute; top:18px; right:18px; font-size:20px;">
+            <button class="modal-close-btn" id="btn-close-discord-login" title="Zamknij"
+                style="background:none; border:none; cursor:pointer; color:var(--color-text-dim); position:absolute; top:18px; right:18px; font-size:20px;">
                 &times;
             </button>
-            <h3 style="margin-top: 0; margin-bottom: 8px; font-family: var(--font-tech); color: var(--color-blue-light); text-transform: uppercase; font-size: 16px; letter-spacing:0.05em;">Logowanie Administratora</h3>
-            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">Wprowadź dane dostępowe administratora Vertone.</p>
+            <h3
+                style="margin-top: 0; margin-bottom: 8px; font-family: var(--font-tech); color: var(--color-blue-light); text-transform: uppercase; font-size: 16px; letter-spacing:0.05em;">
+                Logowanie Administratora</h3>
+            <p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 20px;">Wprowadź dane dostępowe
+                administratora Vertone.</p>
 
             <form id="admin-login-form" onsubmit="doAdminLogin(event)">
                 <div class="modal-form-group" style="margin-bottom: 16px;">
-                    <label for="admin-username-input" style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Nazwa użytkownika:</label>
-                    <input type="text" id="admin-username-input" class="input-dark" placeholder="np. Użytkownik123" style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="username">
+                    <label for="admin-username-input"
+                        style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Nazwa
+                        użytkownika:</label>
+                    <input type="text" id="admin-username-input" class="input-dark" placeholder="np. Użytkownik123"
+                        style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="username">
                 </div>
 
                 <div class="modal-form-group" style="margin-bottom: 18px;">
-                    <label for="admin-password-input" style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Hasło:</label>
-                    <input type="password" id="admin-password-input" class="input-dark" placeholder="Wprowadź hasło..." style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="current-password">
+                    <label for="admin-password-input"
+                        style="font-size: 12px; margin-bottom: 6px; display: block; color: var(--color-text-muted);">Hasło:</label>
+                    <input type="password" id="admin-password-input" class="input-dark" placeholder="Wprowadź hasło..."
+                        style="width: 100%; padding: 10px 14px; border-radius: 8px;" autocomplete="current-password">
                 </div>
 
-                <div id="admin-login-error" class="hidden" style="color: var(--color-danger); font-size: 12px; margin-bottom: 15px; background: rgba(244, 63, 94, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.2); text-align: center;">
+                <div id="admin-login-error" class="hidden"
+                    style="color: var(--color-danger); font-size: 12px; margin-bottom: 15px; background: rgba(244, 63, 94, 0.08); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(244, 63, 94, 0.2); text-align: center;">
                     Nieprawidłowa nazwa użytkownika lub hasło!
                 </div>
 
                 <div class="modal-actions" style="border-top: none; padding-top: 0; margin-top: 0;">
-                    <button type="submit" class="btn btn-primary btn-full btn-techno" id="btn-submit-admin-login" onclick="doAdminLogin(event)" style="padding: 12px 20px;">
+                    <button type="submit" class="btn btn-primary btn-full btn-techno" id="btn-submit-admin-login"
+                        onclick="doAdminLogin(event)" style="padding: 12px 20px;">
                         <span>Zaloguj się</span>
                     </button>
                 </div>
@@ -889,11 +954,18 @@
     <!-- Custom Confirmation Modal -->
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-box glass highlight-blue" style="max-width: 400px; text-align: center;">
-            <h3 class="modal-title monospace" id="confirm-modal-title" style="margin-bottom: 12px;" data-i18n="confirm_title">Potwierdzenie</h3>
-            <p class="modal-subtitle" id="confirm-modal-message" style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Czy na pewno chcesz wykonać tę akcję?</p>
-            <div class="modal-actions" style="justify-content: center; gap: 15px; border-top: none; padding-top: 0; margin-top: 0;">
-                <button class="btn btn-secondary" id="btn-confirm-cancel" style="padding: 8px 20px;" data-i18n="btn_cancel">Anuluj</button>
-                <button class="btn btn-primary" id="btn-confirm-accept" style="padding: 8px 24px; background: linear-gradient(135deg, var(--color-danger) 0%, #be123c 100%); border-color: rgba(244, 63, 94, 0.35); box-shadow: 0 0 10px rgba(244, 63, 94, 0.15);" data-i18n="btn_yes">Tak</button>
+            <h3 class="modal-title monospace" id="confirm-modal-title" style="margin-bottom: 12px;"
+                data-i18n="confirm_title">Potwierdzenie</h3>
+            <p class="modal-subtitle" id="confirm-modal-message"
+                style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Czy na pewno chcesz
+                wykonać tę akcję?</p>
+            <div class="modal-actions"
+                style="justify-content: center; gap: 15px; border-top: none; padding-top: 0; margin-top: 0;">
+                <button class="btn btn-secondary" id="btn-confirm-cancel" style="padding: 8px 20px;"
+                    data-i18n="btn_cancel">Anuluj</button>
+                <button class="btn btn-primary" id="btn-confirm-accept"
+                    style="padding: 8px 24px; background: linear-gradient(135deg, var(--color-danger) 0%, #be123c 100%); border-color: rgba(244, 63, 94, 0.35); box-shadow: 0 0 10px rgba(244, 63, 94, 0.15);"
+                    data-i18n="btn_yes">Tak</button>
             </div>
         </div>
     </div>
@@ -901,14 +973,18 @@
     <!-- Custom Alert Modal -->
     <div id="alert-modal" class="modal-overlay">
         <div class="modal-box glass highlight-blue" style="max-width: 400px; text-align: center;">
-            <h3 class="modal-title monospace" id="alert-modal-title" style="margin-bottom: 12px;" data-i18n="alert_title">Powiadomienie</h3>
-            <p class="modal-subtitle" id="alert-modal-message" style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Komunikat</p>
-            <div class="modal-actions" style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0;">
+            <h3 class="modal-title monospace" id="alert-modal-title" style="margin-bottom: 12px;"
+                data-i18n="alert_title">Powiadomienie</h3>
+            <p class="modal-subtitle" id="alert-modal-message"
+                style="margin-bottom: 24px; font-size: 13.5px; color: var(--color-text-primary);">Komunikat</p>
+            <div class="modal-actions"
+                style="justify-content: center; border-top: none; padding-top: 0; margin-top: 0;">
                 <button class="btn btn-primary" id="btn-alert-close" style="padding: 8px 30px;">OK</button>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js?v=20260719"></script>
 </body>
 

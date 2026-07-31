@@ -28,8 +28,79 @@ function sendDiscordWebhookNotification(title, description, fields = []) {
     }
 }
 
-// --- Cloud Database Sync Engine (Firebase / REST API) ---
-const CLOUD_DB_URL = 'https://vertone-studio-default-rtdb.europe-west1.firebasedatabase.app'; // Wklej URL Firebase Realtime DB, aby synchronizować opinie na żywo u wszystkich!
+// --- Supabase Database & Storage Engine ---
+const SUPABASE_URL = 'https://qopruuhnrbvkjwineaig.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvcHJ1dWhucmJ2a2p3aW5lYWlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyNDY1ODAsImV4cCI6MjEwMDgyMjU4MH0.-Xs3khTZjpvg0x0XVGpzY6STmREUD2tdoFV2vHvFghs';
+
+let supabaseClient = null;
+function getSupabaseClient() {
+    if (!supabaseClient && window.supabase && typeof window.supabase.createClient === 'function') {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return supabaseClient;
+}
+
+async function fetchReviewsFromSupabase() {
+    const client = getSupabaseClient();
+    if (!client) return null;
+    try {
+        const { data, error } = await client
+            .from('reviews')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Supabase fetch reviews error:", error);
+            return null;
+        }
+        return data;
+    } catch (e) {
+        console.error("Supabase fetch exception:", e);
+        return null;
+    }
+}
+
+async function uploadAudioToSupabase(file, folderName) {
+    const client = getSupabaseClient();
+    if (!client || !file) return null;
+
+    const fileExt = file.name.split('.').pop().toLowerCase() || 'mp3';
+    const fileName = `${folderName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+    const filePath = `${folderName}/${fileName}`;
+
+    // Try configured public buckets: 'audio-reviews' and fallback 'review-audio'
+    const bucketsToTry = ['audio-reviews', 'review-audio'];
+
+    for (const bucketName of bucketsToTry) {
+        try {
+            const { data, error } = await client.storage
+                .from(bucketName)
+                .upload(filePath, file, {
+                    contentType: file.type || 'audio/mpeg',
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (!error && data) {
+                const { data: publicUrlData } = client.storage
+                    .from(bucketName)
+                    .getPublicUrl(filePath);
+
+                if (publicUrlData && publicUrlData.publicUrl) {
+                    return publicUrlData.publicUrl;
+                }
+            } else if (error) {
+                console.warn(`Supabase upload to bucket ${bucketName} failed:`, error.message);
+            }
+        } catch (e) {
+            console.error(`Exception uploading to ${bucketName}:`, e);
+        }
+    }
+    return null;
+}
+
+// --- Cloud Database Sync Engine (Firebase / REST API Fallback) ---
+const CLOUD_DB_URL = 'https://vertone-studio-default-rtdb.europe-west1.firebasedatabase.app';
 
 async function fetchFromCloud(endpoint) {
     if (!CLOUD_DB_URL) return null;
@@ -376,36 +447,54 @@ async function loadGraphics() {
 }
 
 async function loadReviews() {
+    let supabaseReviews = await fetchReviewsFromSupabase();
     let dbReviews = [];
-    try {
-        if (typeof getAllFromDB === 'function' && db) {
-            dbReviews = await getAllFromDB('reviews');
-        }
-    } catch (e) {
-        console.error("IndexedDB error in loadReviews:", e);
-    }
 
-    // Fetch live reviews from Cloud DB if configured
-    const cloudReviews = await fetchFromCloud('reviews');
-    if (cloudReviews && Array.isArray(cloudReviews) && cloudReviews.length > 0) {
-        for (const rev of cloudReviews) {
-            if (rev && rev.id) {
-                if (db) {
-                    try { await saveToDB('reviews', rev); } catch (e) {}
-                }
-                if (!dbReviews.some(r => r.id === rev.id)) {
-                    dbReviews.push(rev);
+    if (supabaseReviews && Array.isArray(supabaseReviews) && supabaseReviews.length > 0) {
+        dbReviews = supabaseReviews.map(r => ({
+            id: r.id ? String(r.id) : ('rev_' + Date.now()),
+            author: r.author || 'Anonim',
+            rating: parseInt(r.rating) || 5,
+            text: r.text || '',
+            avatar: r.avatar || 'user1',
+            votesUp: parseInt(r.votes_up) || 0,
+            votesDown: parseInt(r.votes_down) || 0,
+            votes_up: parseInt(r.votes_up) || 0,
+            votes_down: parseInt(r.votes_down) || 0,
+            before_audio_url: r.before_audio_url || null,
+            after_audio_url: r.after_audio_url || null,
+            created_at: r.created_at
+        }));
+    } else {
+        try {
+            if (typeof getAllFromDB === 'function' && db) {
+                dbReviews = await getAllFromDB('reviews');
+            }
+        } catch (e) {
+            console.error("IndexedDB error in loadReviews:", e);
+        }
+
+        const cloudReviews = await fetchFromCloud('reviews');
+        if (cloudReviews && Array.isArray(cloudReviews) && cloudReviews.length > 0) {
+            for (const rev of cloudReviews) {
+                if (rev && rev.id) {
+                    if (db) {
+                        try { await saveToDB('reviews', rev); } catch (e) {}
+                    }
+                    if (!dbReviews.some(r => String(r.id) === String(rev.id))) {
+                        dbReviews.push(rev);
+                    }
                 }
             }
         }
     }
 
     const deletedIds = getDeletedIds('vertone_deleted_reviews');
-    const combinedReviews = DEFAULT_REVIEWS.filter(r => !deletedIds.includes(r.id));
+    const combinedReviews = DEFAULT_REVIEWS.filter(r => !deletedIds.includes(String(r.id)));
 
     if (dbReviews && dbReviews.length > 0) {
         for (const rev of dbReviews) {
-            if (!deletedIds.includes(rev.id) && !combinedReviews.some(existing => existing.id === rev.id)) {
+            if (!deletedIds.includes(String(rev.id)) && !combinedReviews.some(existing => String(existing.id) === String(rev.id))) {
                 combinedReviews.push(rev);
             }
         }
@@ -1013,10 +1102,10 @@ function renderReviews() {
         };
         const avatarEmoji = avatarPresets[rev.avatar] || '👤';
 
-        // Check if there are before/after comparison files
+        // Check if there are before/after comparison files or URLs
         let audioHTML = '';
-        const hasBefore = rev.beforeAudioData || rev.beforeAudioBlob;
-        const hasAfter = rev.afterAudioData || rev.afterAudioBlob;
+        const hasBefore = rev.beforeAudioData || rev.beforeAudioBlob || rev.before_audio_url || rev.beforeAudioUrl;
+        const hasAfter = rev.afterAudioData || rev.afterAudioBlob || rev.after_audio_url || rev.afterAudioUrl;
 
         if (hasBefore || hasAfter) {
             audioHTML = `
@@ -1051,10 +1140,10 @@ function renderReviews() {
             ${audioHTML}
             <div class="track-voting-row" style="border-top:none; padding-top:10px;">
                 <button class="btn-vote vote-up ${hasVoted === 'up' ? 'voted' : ''}" data-id="${rev.id}">
-                    👍 <span class="vote-count">${rev.votesUp || 0}</span>
+                    👍 <span class="vote-count">${rev.votesUp || rev.votes_up || 0}</span>
                 </button>
                 <button class="btn-vote vote-down ${hasVoted === 'down' ? 'voted' : ''}" data-id="${rev.id}">
-                    👎 <span class="vote-count">${rev.votesDown || 0}</span>
+                    👎 <span class="vote-count">${rev.votesDown || rev.votes_down || 0}</span>
                 </button>
             </div>
         `;
@@ -1069,6 +1158,14 @@ function renderReviews() {
                 const id = btn.getAttribute('data-id');
                 showCustomConfirm(t('confirm_delete_review') || "Czy na pewno usunąć tę opinię?", async () => {
                     markAsDeleted('vertone_deleted_reviews', id);
+                    const client = getSupabaseClient();
+                    if (client) {
+                        try {
+                            await client.from('reviews').delete().eq('id', id);
+                        } catch(e) {
+                            console.error("Supabase delete review error:", e);
+                        }
+                    }
                     await deleteFromDB('reviews', id);
                     await deleteFromCloud('reviews', id);
                     await loadReviews();
@@ -1098,10 +1195,11 @@ function renderReviews() {
 
 // Review Audio Players handler
 function handleReviewAudioPlayToggle(id, type) {
-    const review = appState.reviews.find(r => r.id === id);
+    const review = appState.reviews.find(r => String(r.id) === String(id));
     if (!review) return;
 
     const playId = `${id}_${type}`;
+    const url = type === 'before' ? (review.before_audio_url || review.beforeAudioUrl) : (review.after_audio_url || review.afterAudioUrl);
     const data = type === 'before' ? review.beforeAudioData : review.afterAudioData;
     const mimeType = type === 'before' ? review.beforeFileType : review.afterFileType;
     const legacyBlob = type === 'before' ? review.beforeAudioBlob : review.afterAudioBlob;
@@ -1117,7 +1215,9 @@ function handleReviewAudioPlayToggle(id, type) {
         pauseGlobalAudio();
         appState.currentPlayingId = playId;
 
-        if (data) {
+        if (url) {
+            audio.src = url;
+        } else if (data) {
             const blob = new Blob([data], { type: mimeType || 'audio/mpeg' });
             audio.src = URL.createObjectURL(blob);
         } else if (legacyBlob) {
@@ -1326,11 +1426,25 @@ async function handleVote(type, id, voteType) {
             renderGraphics();
         }
     } else if (type === 'review') {
-        const item = appState.reviews.find(r => r.id === id);
+        const item = appState.reviews.find(r => String(r.id) === String(id));
         if (item) {
-            item.votesUp = Math.max(0, (item.votesUp || 0) + deltaUp);
-            item.votesDown = Math.max(0, (item.votesDown || 0) + deltaDown);
-            await saveToDB('reviews', item);
+            item.votesUp = Math.max(0, (item.votesUp || item.votes_up || 0) + deltaUp);
+            item.votesDown = Math.max(0, (item.votesDown || item.votes_down || 0) + deltaDown);
+            item.votes_up = item.votesUp;
+            item.votes_down = item.votesDown;
+
+            const client = getSupabaseClient();
+            if (client) {
+                try {
+                    await client.from('reviews').update({
+                        votes_up: item.votesUp,
+                        votes_down: item.votesDown
+                    }).eq('id', id);
+                } catch(e) {
+                    console.error("Supabase vote update error:", e);
+                }
+            }
+            try { await saveToDB('reviews', item); } catch(e) {}
             renderReviews();
         }
     }
@@ -2659,34 +2773,80 @@ async function submitNewReview() {
         }
     }
 
+    showCustomAlert("Wysyłanie opinii do bazy Supabase... Proszę czekać.");
+
     try {
+        // Upload audio files to Supabase Storage bucket 'audio-reviews'
+        let beforeUrl = null;
+        let afterUrl = null;
+
+        if (beforeFile) {
+            beforeUrl = await uploadAudioToSupabase(beforeFile, 'before');
+        }
+        if (afterFile) {
+            afterUrl = await uploadAudioToSupabase(afterFile, 'after');
+        }
+
         const beforeData = beforeFile ? await readFileAsArrayBuffer(beforeFile) : null;
         const afterData = afterFile ? await readFileAsArrayBuffer(afterFile) : null;
 
-        const newReview = {
-            id: 'rev_' + Date.now(),
+        const newReviewData = {
             author: author,
             rating: appReviewRating || 5,
             text: text,
+            avatar: avatar,
+            votes_up: 0,
+            votes_down: 0,
+            before_audio_url: beforeUrl,
+            after_audio_url: afterUrl
+        };
+
+        const client = getSupabaseClient();
+        let insertedId = null;
+
+        if (client) {
+            const { data, error } = await client
+                .from('reviews')
+                .insert([newReviewData])
+                .select();
+
+            if (error) {
+                console.error("Supabase insert review error:", error);
+            } else if (data && data[0]) {
+                insertedId = data[0].id;
+            }
+        }
+
+        const localReview = {
+            id: insertedId ? String(insertedId) : ('rev_' + Date.now()),
+            author: author,
+            rating: appReviewRating || 5,
+            text: text,
+            avatar: avatar,
             votesUp: 0,
             votesDown: 0,
-            avatar: avatar,
+            votes_up: 0,
+            votes_down: 0,
             beforeAudioData: beforeData,
             beforeFileType: beforeFile ? beforeFile.type : null,
             afterAudioData: afterData,
-            afterFileType: afterFile ? afterFile.type : null
+            afterFileType: afterFile ? afterFile.type : null,
+            before_audio_url: beforeUrl,
+            after_audio_url: afterUrl
         };
 
-        await saveToDB('reviews', newReview);
-        await saveToCloud('reviews', newReview);
+        await saveToDB('reviews', localReview);
+        await saveToCloud('reviews', localReview);
+
         sendDiscordWebhookNotification(
             '⭐ Nowa Opinia na stronie Vertone!',
-            `**Autor:** ${author}\n**Ocena:** ${'★'.repeat(newReview.rating)}\n**Treść opinii:** "${text}"`,
+            `**Autor:** ${author}\n**Ocena:** ${'★'.repeat(localReview.rating)}\n**Treść opinii:** "${text}"`,
             [
-                { name: 'Przed miksem Audio', value: beforeFile ? `Tak (${beforeFile.name})` : 'Brak', inline: true },
-                { name: 'Po miksie Audio', value: afterFile ? `Tak (${afterFile.name})` : 'Brak', inline: true }
+                { name: 'Przed miksem Audio', value: beforeUrl ? `[Odsłuchaj MP3](${beforeUrl})` : (beforeFile ? `Tak (${beforeFile.name})` : 'Brak'), inline: true },
+                { name: 'Po miksie Audio', value: afterUrl ? `[Odsłuchaj MP3](${afterUrl})` : (afterFile ? `Tak (${afterFile.name})` : 'Brak'), inline: true }
             ]
         );
+
         closeModal('write-review-modal');
 
         if (authorInput) authorInput.value = '';
@@ -2694,12 +2854,13 @@ async function submitNewReview() {
         if (beforeInput) beforeInput.value = '';
         if (afterInput) afterInput.value = '';
 
+        // Immediately fetch updated reviews from Supabase and render
         await loadReviews();
         renderReviews();
-        showCustomAlert("Dziękujemy za opinię! Została opublikowana.");
+        showCustomAlert("Dziękujemy za opinię! Została zapisana w Supabase i opublikowana.");
     } catch (e) {
         console.error("Failed to save review:", e);
-        showCustomAlert("Błąd podczas zapisywania opinii w bazie danych!");
+        showCustomAlert("Błąd podczas zapisywania opinii w bazie Supabase!");
     }
 }
 
