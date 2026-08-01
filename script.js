@@ -2841,7 +2841,10 @@ async function submitNewReview() {
             afterUrl = await uploadAudioToSupabase(afterFile, 'after');
         }
 
+        const reviewId = 'rev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+
         const newReviewData = {
+            id: reviewId,
             author: author,
             rating: parseInt(appReviewRating) || 5,
             text: text,
