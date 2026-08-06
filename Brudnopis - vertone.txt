@@ -213,4 +213,25 @@ Hasło: Vertisvertone123!@#
 Na razie tyle.
 
 
+Zmiany:
+
+1. Zrób następny panel w zakładce portfolio o nazwie "Strony, aplikacje i wtyczki" z motywem żółtym. Zrób tam przycisk sprawdź i następną stronę z płynnym przjeściem do kolejnych paneli o nazwach "Strony" i obok "Aplikacje" i obok "Wtyczki". Strony - motyw zielony, Aplikacje - motyw czerwony, Wtyczki - motyw pomarańczowy. Każdy z tych paneli ma mieć przycisk "Zobacz", który przekieruje płynnym przejściem na kolejną stronę gdzie już będzie można zobaczyć wszystkie prace oraz linki do nich. Jak ma wyglądać każdy panel ze zdjęciami strony? Tak:
+
+- Każdy panel ma mieć na środku 4 zdjęcia w siatce (coś typu okno). W te zdjęcia można wejść każde z osobna i dokładnie sprawdzić sobie co tam jest. Pod tymi zdjęciami napis "Wejdź na stronę, aby zobaczyć więcej!" i w tej wiadomości link, który po kliknieciu w napis odpali stronę. 
+
+Pod zdjęciami ze stroną tą pierwszą gdzie będzie link opis: Jedyna taka autorska strona z aplikacjami oraz wtyczkami pomagającymi w codziennej pracy na komputerze oraz w przeglądaniu internetu. 
+
+Link do strony: https://vertisek.github.io/ApliHub/
+
+- Pod tymi zdjęciami i linkiem łapki w dół i w górę tak jak w innych portfolio.
+
+- W każdym panelu ma być podobnie, ale w panelu z wtyczkami nie ma być linku do wtyczek, ale do strony i ma to wygladac jak pozyżej. Opis pod zdjęciami: Autorskie i różnorodne wtyczki ułatwiające pracę i przeglądanie internetu do przeglądarek oraz programów. Wszystkie w jednym miejscu!
+
+- W aplikacjach też nie ma być linku do aplikacji tylko do strony. Skopiuj ten, który jest wyżej. Opis aplikacji jak w każdym panelu: Autorskie aplikacje wejdź i zobacz sam.
+
+Działaj.
+
+
+
+
 

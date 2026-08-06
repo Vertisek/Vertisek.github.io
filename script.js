@@ -265,14 +265,74 @@ const DEFAULT_REVIEWS = [
     }
 ];
 
+// --- Default WebApps Data ---
+const DEFAULT_WEBAPPS = [
+    {
+        id: 'webapp-strony',
+        category: 'strony',
+        title: 'ApliHub - Strony',
+        photos: [
+            'grafiki/aplihub_site_preview_1.png',
+            'grafiki/aplihub_site_preview_2.png',
+            'grafiki/aplihub_site_preview_3.png',
+            'grafiki/aplihub_site_preview_4.png'
+        ],
+        description: 'Jedyna taka autorska strona z aplikacjami oraz wtyczkami pomagającymi w codziennej pracy na komputerze oraz w przeglądaniu internetu.',
+        linkUrl: 'https://vertisek.github.io/ApliHub/',
+        linkLabel: 'Wejdź na stronę, aby zobaczyć więcej!',
+        themeColor: '#22c55e',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: []
+    },
+    {
+        id: 'webapp-aplikacje',
+        category: 'aplikacje',
+        title: 'ApliHub - Aplikacje',
+        photos: [
+            'grafiki/aplihub_apps_preview_1.png',
+            'grafiki/aplihub_apps_preview_2.png',
+            'grafiki/aplihub_apps_preview_3.png',
+            'grafiki/aplihub_apps_preview_4.png'
+        ],
+        description: 'Autorskie aplikacje wejdź i zobacz sam.',
+        linkUrl: 'https://vertisek.github.io/ApliHub/',
+        linkLabel: 'Wejdź na stronę, aby zobaczyć więcej!',
+        themeColor: '#ef4444',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: []
+    },
+    {
+        id: 'webapp-wtyczki',
+        category: 'wtyczki',
+        title: 'ApliHub - Wtyczki',
+        photos: [
+            'grafiki/aplihub_plugins_preview_1.png',
+            'grafiki/aplihub_plugins_preview_2.png',
+            'grafiki/aplihub_plugins_preview_3.png',
+            'grafiki/aplihub_plugins_preview_4.png'
+        ],
+        description: 'Autorskie i różnorodne wtyczki ułatwiające pracę i przeglądanie internetu do przeglądarek oraz programów. Wszystkie w jednym miejscu!',
+        linkUrl: 'https://vertisek.github.io/ApliHub/',
+        linkLabel: 'Wejdź na stronę, aby zobaczyć więcej!',
+        themeColor: '#f97316',
+        votesUp: 0,
+        votesDown: 0,
+        feedbacks: []
+    }
+];
+
 // --- App State ---
 let appState = {
     isOwner: false, // Set dynamically on load based on user role
     activeTab: 'courses',
     activeCategory: 'bannery',
+    webappsCategory: 'strony',
     tracks: [...DEFAULT_TRACKS],
     graphics: [...DEFAULT_GRAPHICS],
     reviews: [...DEFAULT_REVIEWS],
+    webapps: [...DEFAULT_WEBAPPS],
     currentPlayingId: null,
     globalVolume: 0.8,
     isMuted: false,
@@ -398,6 +458,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderTracks();
         renderGraphics();
         renderReviews();
+        renderWebapps();
 
         setupSupabaseRealtimeReviews();
     } catch (err) {
@@ -412,7 +473,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 function getDeletedIds(storageKey) {
     try {
         return JSON.parse(localStorage.getItem(storageKey) || '[]');
-    } catch(e) {
+    } catch (e) {
         return [];
     }
 }
@@ -470,7 +531,7 @@ async function loadGraphics() {
         if (typeof getAllFromDB === 'function' && db) {
             dbGraphics = await getAllFromDB('graphics');
         }
-    } catch (e) {}
+    } catch (e) { }
 
     const combinedGraphics = [...DEFAULT_GRAPHICS];
     if (dbGraphics && dbGraphics.length > 0) {
@@ -600,9 +661,15 @@ function setupTabSwitching() {
 function setupPortfolioViews() {
     const btnEnterMusic = document.getElementById('btn-enter-music');
     const btnEnterGraphics = document.getElementById('btn-enter-graphics');
+    const btnEnterWebapps = document.getElementById('btn-enter-webapps');
     const btnBackMusic = document.getElementById('btn-back-music-dashboard');
     const btnBackGraphics = document.getElementById('btn-back-graphics-dashboard');
     const btnBackGraphicsCats = document.getElementById('btn-back-graphics-categories');
+    const btnBackWebappsDash = document.getElementById('btn-back-webapps-dashboard');
+    const btnBackWebappsCats = document.getElementById('btn-back-webapps-categories');
+    const btnEnterPages = document.getElementById('btn-enter-pages');
+    const btnEnterApps = document.getElementById('btn-enter-apps');
+    const btnEnterPlugins = document.getElementById('btn-enter-plugins');
 
     if (btnEnterMusic) {
         btnEnterMusic.addEventListener('click', () => {
@@ -613,6 +680,12 @@ function setupPortfolioViews() {
     if (btnEnterGraphics) {
         btnEnterGraphics.addEventListener('click', () => {
             showPortfolioView('graphics-categories');
+        });
+    }
+
+    if (btnEnterWebapps) {
+        btnEnterWebapps.addEventListener('click', () => {
+            showPortfolioView('webapps-categories');
         });
     }
 
@@ -633,6 +706,56 @@ function setupPortfolioViews() {
             showPortfolioView('graphics-categories');
         });
     }
+
+    if (btnBackWebappsDash) {
+        btnBackWebappsDash.addEventListener('click', () => {
+            showPortfolioView('dashboard');
+        });
+    }
+
+    if (btnBackWebappsCats) {
+        btnBackWebappsCats.addEventListener('click', () => {
+            showPortfolioView('webapps-categories');
+        });
+    }
+
+    if (btnEnterPages) {
+        btnEnterPages.addEventListener('click', (e) => {
+            e.stopPropagation();
+            appState.webappsCategory = 'strony';
+            renderWebapps();
+            showPortfolioView('webapps-list');
+        });
+    }
+
+    if (btnEnterApps) {
+        btnEnterApps.addEventListener('click', (e) => {
+            e.stopPropagation();
+            appState.webappsCategory = 'aplikacje';
+            renderWebapps();
+            showPortfolioView('webapps-list');
+        });
+    }
+
+    if (btnEnterPlugins) {
+        btnEnterPlugins.addEventListener('click', (e) => {
+            e.stopPropagation();
+            appState.webappsCategory = 'wtyczki';
+            renderWebapps();
+            showPortfolioView('webapps-list');
+        });
+    }
+
+    document.querySelectorAll('#webapps-categories-selector .webapp-cat-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const category = card.getAttribute('data-category');
+            if (category) {
+                appState.webappsCategory = category;
+                renderWebapps();
+                showPortfolioView('webapps-list');
+            }
+        });
+    });
 }
 
 function showPortfolioView(view) {
@@ -640,6 +763,8 @@ function showPortfolioView(view) {
     const musicView = document.getElementById('portfolio-music-view');
     const graphicsCatsView = document.getElementById('portfolio-graphics-categories-view');
     const graphicsListView = document.getElementById('portfolio-graphics-list-view');
+    const webappsCatsView = document.getElementById('portfolio-webapps-categories-view');
+    const webappsListView = document.getElementById('portfolio-webapps-list-view');
 
     if (!dashboard || !musicView || !graphicsCatsView || !graphicsListView) return;
 
@@ -647,6 +772,8 @@ function showPortfolioView(view) {
     musicView.classList.add('hidden');
     graphicsCatsView.classList.add('hidden');
     graphicsListView.classList.add('hidden');
+    if (webappsCatsView) webappsCatsView.classList.add('hidden');
+    if (webappsListView) webappsListView.classList.add('hidden');
 
     if (view === 'dashboard') {
         dashboard.classList.remove('hidden');
@@ -659,6 +786,10 @@ function showPortfolioView(view) {
         graphicsCatsView.classList.remove('hidden');
     } else if (view === 'graphics-list') {
         graphicsListView.classList.remove('hidden');
+    } else if (view === 'webapps-categories') {
+        if (webappsCatsView) webappsCatsView.classList.remove('hidden');
+    } else if (view === 'webapps-list') {
+        if (webappsListView) webappsListView.classList.remove('hidden');
     }
 }
 
@@ -1133,6 +1264,240 @@ function renderGraphics() {
     });
 }
 
+// 2b. Render WebApps (Strony, Aplikacje, Wtyczki)
+function renderWebapps() {
+    const container = document.getElementById('webapps-items-list-container');
+    const titleEl = document.getElementById('webapps-list-category-title');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const category = appState.webappsCategory || 'strony';
+    const categoryLabels = {
+        'strony': 'Strony',
+        'aplikacje': 'Aplikacje',
+        'wtyczki': 'Wtyczki'
+    };
+    const categoryColors = {
+        'strony': '#22c55e',
+        'aplikacje': '#ef4444',
+        'wtyczki': '#f97316'
+    };
+
+    if (titleEl) {
+        titleEl.textContent = `Portfolio // Strony, aplikacje i wtyczki // ${categoryLabels[category] || category}`;
+        titleEl.style.color = categoryColors[category] || 'var(--color-yellow-light)';
+    }
+
+    // Load saved votes and feedbacks from localStorage for webapps
+    appState.webapps.forEach(item => {
+        const savedVoteData = localStorage.getItem(`vertone_webapp_votes_${item.id}`);
+        if (savedVoteData) {
+            try {
+                const parsed = JSON.parse(savedVoteData);
+                item.votesUp = parsed.votesUp || 0;
+                item.votesDown = parsed.votesDown || 0;
+            } catch (e) { }
+        }
+        const savedFbs = localStorage.getItem(`vertone_webapp_feedbacks_${item.id}`);
+        if (savedFbs) {
+            try {
+                item.feedbacks = JSON.parse(savedFbs) || [];
+            } catch (e) { }
+        }
+    });
+
+    const filtered = (appState.webapps || []).filter(w => w.category === category);
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p class="monospace" style="color:var(--color-text-dim); text-align:center; padding: 20px 0;">Brak pozycji w tej kategorii.</p>';
+        return;
+    }
+
+    filtered.forEach(item => {
+        const hasVoted = getVoteStatus('webapp', item.id);
+        const card = document.createElement('div');
+        card.className = `track-player-card ${appState.isOwner ? 'owner-card' : ''}`;
+        card.setAttribute('data-id', item.id);
+        card.style.borderColor = (item.themeColor || '#eab308') + '55';
+        card.style.position = 'relative';
+
+        const photosHTML = (item.photos || []).map((photoUrl, idx) => `
+            <div class="webapp-photo-item" data-url="${photoUrl}" data-title="${item.title} - Podgląd ${idx + 1}">
+                <img src="${photoUrl}" alt="${item.title} ${idx + 1}">
+                <div class="photo-overlay">🔍 Powiększ</div>
+            </div>
+        `).join('');
+
+        let feedbackHTML = '';
+        if (appState.isOwner) {
+            const fbs = item.feedbacks || [];
+            feedbackHTML = `
+                <div class="graphic-reviews-report" style="background: rgba(234, 179, 8, 0.03); border-color: rgba(234, 179, 8, 0.08); margin-top: 10px;">
+                    <span class="report-title-admin monospace" style="color: var(--color-yellow-light)">Sugestie i opinie (${fbs.length}):</span>
+                    ${fbs.length === 0 ? '<p style="font-size:11px; color:var(--color-text-dim)">Brak feedbacku od użytkowników.</p>' : ''}
+                    <div style="max-height:100px; overflow-y:auto; display:flex; flex-direction:column; gap:4px;">
+                        ${fbs.map((fb, idx) => `
+                            <div class="report-item" style="display:flex; justify-content:space-between; align-items:center;">
+                                <span>• "${fb}"</span>
+                                <button class="btn-delete-comment" data-id="${item.id}" data-index="${idx}" data-type="webapp" style="background:none; border:none; color:var(--color-danger); cursor:pointer; font-size:11px;">🗑️</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        } else {
+            feedbackHTML = `
+                <div class="graphic-feedback-box" style="border-color: rgba(234, 179, 8, 0.04); margin-top: 10px;">
+                    <span class="feedback-header-lbl">Zostaw feedback / opinię o tej sekcji:</span>
+                    <div class="feedback-input-row">
+                        <textarea class="input-dark feedback-textarea" placeholder="Wpisz opinię..." data-id="${item.id}" style="border-radius: 6px;"></textarea>
+                        <button class="btn btn-send-feedback btn-submit-webapp-feedback" data-id="${item.id}" style="background: rgba(234, 179, 8, 0.12); color: var(--color-yellow-light); border-color: rgba(234, 179, 8, 0.25);">Wyślij</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <div class="track-info">
+                <span class="track-title monospace" style="color: ${item.themeColor || 'var(--color-yellow-light)'}; font-size: 16px;">${item.title}</span>
+            </div>
+
+            <div class="webapp-window-frame">
+                <div class="webapp-window-header">
+                    <span class="window-dot red"></span>
+                    <span class="window-dot yellow"></span>
+                    <span class="window-dot green"></span>
+                    <span class="window-title">${item.title} // Siatka 4 zdjęć</span>
+                </div>
+                <div class="webapp-photos-grid">
+                    ${photosHTML}
+                </div>
+            </div>
+
+            <p class="webapp-description" style="border-left-color: ${item.themeColor || 'var(--color-yellow-main)'};">
+                ${item.description}
+            </p>
+
+            <div class="webapp-link-box">
+                <span style="font-size: 16px;">👉</span>
+                <a href="${item.linkUrl}" target="_blank" rel="noopener noreferrer" class="webapp-external-link">
+                    ${item.linkLabel || 'Wejdź na stronę, aby zobaczyć więcej!'}
+                </a>
+            </div>
+
+            <div class="track-voting-row">
+                <button class="btn-vote vote-up ${hasVoted === 'up' ? 'voted' : ''}" data-id="${item.id}" data-type="webapp">
+                    👍 <span class="vote-count">${item.votesUp || 0}</span>
+                </button>
+                <button class="btn-vote vote-down ${hasVoted === 'down' ? 'voted' : ''}" data-id="${item.id}" data-type="webapp">
+                    👎 <span class="vote-count">${item.votesDown || 0}</span>
+                </button>
+                <button class="btn-vote btn-feedback-toggle" data-id="${item.id}" data-type="webapp" title="Opinie i feedback">
+                    💬 <span class="feedback-count">${(item.feedbacks || []).length}</span>
+                </button>
+                ${appState.isOwner ? `<button class="btn btn-secondary btn-small btn-reset-votes" data-id="${item.id}" data-type="webapp" title="Resetuj oceny" style="margin-left: auto; padding: 4px 8px; font-size:11px;">🔄 Reset</button>` : ''}
+            </div>
+            <div class="feedback-toggle-container hidden" data-id="${item.id}">
+                ${feedbackHTML}
+            </div>
+        `;
+
+        container.appendChild(card);
+    });
+
+    // Lightbox triggers for photos
+    container.querySelectorAll('.webapp-photo-item').forEach(photoItem => {
+        photoItem.addEventListener('click', () => {
+            const url = photoItem.getAttribute('data-url');
+            const title = photoItem.getAttribute('data-title') || 'Podgląd';
+            if (url && typeof openLightbox === 'function') {
+                openLightbox(url, title);
+            }
+        });
+    });
+
+    // Voting triggers
+    container.querySelectorAll('#webapps-items-list-container .vote-up').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleVote('webapp', btn.getAttribute('data-id'), 'up');
+        });
+    });
+    container.querySelectorAll('#webapps-items-list-container .vote-down').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleVote('webapp', btn.getAttribute('data-id'), 'down');
+        });
+    });
+
+    // Feedback toggle listeners
+    container.querySelectorAll('#webapps-items-list-container .btn-feedback-toggle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            const card = btn.closest('.track-player-card');
+            if (card) {
+                const fbContainer = card.querySelector('.feedback-toggle-container');
+                if (fbContainer) fbContainer.classList.toggle('hidden');
+            }
+        });
+    });
+
+    // Reset votes listeners
+    container.querySelectorAll('#webapps-items-list-container .btn-reset-votes').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            showCustomConfirm(t('confirm_reset_votes') || "Czy na pewno chcesz wyczyścić głosy dla tej sekcji?", () => {
+                const item = appState.webapps.find(w => w.id === id);
+                if (item) {
+                    item.votesUp = 0;
+                    item.votesDown = 0;
+                    localStorage.removeItem(`vertone_webapp_votes_${id}`);
+                    renderWebapps();
+                }
+            });
+        });
+    });
+
+    // Feedback submission
+    container.querySelectorAll('.btn-submit-webapp-feedback').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            const card = btn.closest('.track-player-card');
+            const textarea = card ? card.querySelector('.feedback-textarea') : null;
+            if (textarea && textarea.value.trim()) {
+                const text = textarea.value.trim();
+                const item = appState.webapps.find(w => w.id === id);
+                if (item) {
+                    item.feedbacks = item.feedbacks || [];
+                    item.feedbacks.push(text);
+                    localStorage.setItem(`vertone_webapp_feedbacks_${id}`, JSON.stringify(item.feedbacks));
+                    textarea.value = '';
+                    showCustomAlert("Dziękuję za opinię! Została zapisana.");
+                    renderWebapps();
+                }
+            }
+        });
+    });
+
+    // Comment deletion for owner
+    container.querySelectorAll('#webapps-items-list-container .btn-delete-comment').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            const idx = parseInt(btn.getAttribute('data-index'), 10);
+            const item = appState.webapps.find(w => w.id === id);
+            if (item && item.feedbacks && !isNaN(idx)) {
+                item.feedbacks.splice(idx, 1);
+                localStorage.setItem(`vertone_webapp_feedbacks_${id}`, JSON.stringify(item.feedbacks));
+                renderWebapps();
+            }
+        });
+    });
+}
+
 // 3. Render Reviews
 function renderReviews() {
     const container = document.getElementById('reviews-list-container');
@@ -1219,7 +1584,7 @@ function renderReviews() {
                     if (client) {
                         try {
                             await client.from('reviews').delete().eq('id', id);
-                        } catch(e) {
+                        } catch (e) {
                             console.error("Supabase delete review error:", e);
                         }
                     }
@@ -1482,6 +1847,14 @@ async function handleVote(type, id, voteType) {
             await saveToDB('graphics', item);
             renderGraphics();
         }
+    } else if (type === 'webapp') {
+        const item = appState.webapps.find(w => w.id === id);
+        if (item) {
+            item.votesUp = Math.max(0, (item.votesUp || 0) + deltaUp);
+            item.votesDown = Math.max(0, (item.votesDown || 0) + deltaDown);
+            localStorage.setItem(`vertone_webapp_votes_${id}`, JSON.stringify({ votesUp: item.votesUp, votesDown: item.votesDown }));
+            renderWebapps();
+        }
     } else if (type === 'review') {
         const item = appState.reviews.find(r => String(r.id) === String(id));
         if (item) {
@@ -1497,11 +1870,11 @@ async function handleVote(type, id, voteType) {
                         votes_up: item.votesUp,
                         votes_down: item.votesDown
                     }).eq('id', id);
-                } catch(e) {
+                } catch (e) {
                     console.error("Supabase vote update error:", e);
                 }
             }
-            try { await saveToDB('reviews', item); } catch(e) {}
+            try { await saveToDB('reviews', item); } catch (e) { }
             renderReviews();
         }
     }

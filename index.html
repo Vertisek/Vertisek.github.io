@@ -287,6 +287,20 @@
                                 </button>
                             </div>
                         </div>
+
+                        <!-- THIRD PANEL: STRONY, APLIKACJE I WTYCZKI -->
+                        <div class="card glass portfolio-panel-half yellow-panel" id="panel-webapps">
+                            <div class="panel-section-header" style="border-bottom: none; padding-bottom: 0;">
+                                <span class="panel-decor-icon">🌐</span>
+                                <h2 style="color: var(--color-yellow-light);">Strony, aplikacje i wtyczki</h2>
+                                <p class="section-desc">Sprawdź moje autorskie projekty stron, aplikacji desktopowych oraz wtyczek.</p>
+                            </div>
+                            <div style="margin-top: auto; padding-top: 20px;">
+                                <button class="btn btn-primary btn-full btn-techno yellow-btn" id="btn-enter-webapps">
+                                    <span>Sprawdź</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- 2. MUSIC DETAIL VIEW (Sub-page) -->
@@ -370,6 +384,61 @@
                                 style="background: linear-gradient(135deg, var(--color-purple-dim) 0%, var(--color-purple-main) 100%); box-shadow: 0 0 15px var(--color-purple-glow);">
                                 <span>➕ Dodaj Nową Pracę</span>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- 5. WEBAPPS CATEGORIES VIEW (Sub-page) -->
+                    <div id="portfolio-webapps-categories-view" class="portfolio-detail-view hidden">
+                        <div class="detail-view-header"
+                            style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                            <button class="btn btn-secondary btn-small" id="btn-back-webapps-dashboard">Wróć</button>
+                            <h3 class="monospace"
+                                style="color: var(--color-yellow-light); font-size: 15px; margin: 0; font-family: var(--font-tech); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Portfolio // Strony, aplikacje i wtyczki</h3>
+                        </div>
+
+                        <!-- Category Grid -->
+                        <div class="graphics-categories-grid-tetris" id="webapps-categories-selector" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+                            <div class="card glass category-card-btn-tetris webapp-cat-card green-cat" data-category="strony">
+                                <span class="cat-icon-tetris">🌐</span>
+                                <h3 style="color: #22c55e;">Strony</h3>
+                                <p class="cat-desc">Autorskie strony internetowe z unikalnym designem i pełną funkcjonalnością</p>
+                                <button class="btn btn-primary btn-techno green-btn btn-small" id="btn-enter-pages" style="margin-top: 15px; width: 100%;">
+                                    <span>Zobacz</span>
+                                </button>
+                            </div>
+                            <div class="card glass category-card-btn-tetris webapp-cat-card red-cat" data-category="aplikacje">
+                                <span class="cat-icon-tetris">📱</span>
+                                <h3 style="color: #ef4444;">Aplikacje</h3>
+                                <p class="cat-desc">Autorskie aplikacje wspierające codzienne zadania na komputerze</p>
+                                <button class="btn btn-primary btn-techno red-btn btn-small" id="btn-enter-apps" style="margin-top: 15px; width: 100%;">
+                                    <span>Zobacz</span>
+                                </button>
+                            </div>
+                            <div class="card glass category-card-btn-tetris webapp-cat-card orange-cat" data-category="wtyczki">
+                                <span class="cat-icon-tetris">🔌</span>
+                                <h3 style="color: #f97316;">Wtyczki</h3>
+                                <p class="cat-desc">Różnorodne wtyczki i rozszerzenia do przeglądarek oraz programów</p>
+                                <button class="btn btn-primary btn-techno orange-btn btn-small" id="btn-enter-plugins" style="margin-top: 15px; width: 100%;">
+                                    <span>Zobacz</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. WEBAPPS LIST VIEW (Sub-page) -->
+                    <div id="portfolio-webapps-list-view" class="portfolio-detail-view hidden">
+                        <div class="detail-view-header"
+                            style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
+                            <button class="btn btn-secondary btn-small" id="btn-back-webapps-categories">Wróć</button>
+                            <h3 class="monospace" id="webapps-list-category-title"
+                                style="color: var(--color-yellow-light); font-size: 15px; margin: 0; font-family: var(--font-tech); text-transform: uppercase; letter-spacing: 0.05em;">
+                                Portfolio // Strony, aplikacje i wtyczki // Strony</h3>
+                        </div>
+
+                        <!-- Webapps item list container -->
+                        <div id="webapps-items-list-container" class="tracks-list">
+                            <!-- Dynamic webapps cards loaded here -->
                         </div>
                     </div>
                 </section>
